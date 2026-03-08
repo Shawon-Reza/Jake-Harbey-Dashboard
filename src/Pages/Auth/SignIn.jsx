@@ -1,5 +1,6 @@
 import { useState } from "react";
 import loginImg from "../../assets/images/login.png";
+import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
@@ -47,16 +48,11 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex font-nunito">
+    <div className="min-h-screen flex flex-row-reverse font-nunito bg-primary">
       {/* Left Side - Login Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-white">
+      <div className="w-full rounded-l-[100px] md:w-7/12 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-sm">
           {/* Ober Logo */}
-          <div className="mb-12 flex justify-center">
-            <div className="bg-primary rounded-2xl p-3 w-24 h-24 flex items-center justify-center">
-              <span className="text-white font-semibold text-3xl">Ober</span>
-            </div>
-          </div>
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Email Field */}
             <div>
@@ -93,10 +89,10 @@ const SignIn = () => {
                   className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-black" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-black" />
-                    )}
+                    <EyeOff className="h-5 w-5 text-black" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-black" />
+                  )}
                 </button>
               </div>
             </div>
@@ -112,8 +108,14 @@ const SignIn = () => {
         </div>
       </div>
       {/* Right side - Hero Image */}
-      <div className="hidden lg:flex w-1/2 bg-primary">
-        <img src={loginImg} alt="A1c Boost" className="my-auto w-full" />
+      <div
+        className="hidden flex-1 lg:flex w-3/12 bg-primary bg-cover bg-no-repeat bg-center"
+        style={{ backgroundImage: `url(${loginImg})` }}
+      >
+        {/* <img src={loginImg} alt="A1c Boost" className="my-auto w-full" /> */}
+        <div className="flex justify-center items-center h-full mx-auto">
+          <img src={logo} className="h-40" alt="Ober Logo" />
+        </div>
       </div>
     </div>
   );

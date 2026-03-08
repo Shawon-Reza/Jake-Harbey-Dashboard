@@ -8,7 +8,7 @@ export default {
         outfit: ["Outfit", "serif"],
       },
       colors: {
-        primary: "#0F79DE",
+        primary: "#06788F",
         secondary: "#0C517E",
         sidebar: "#F0F0F0",
         neutral: "#263133",
