@@ -24,7 +24,7 @@ export default function Sidebar() {
         <img src={logo} alt="" />
       </div>
 
-      <nav className="flex-1 font-nunito mt-10">
+      <nav className="flex-1 font-poppins mt-10">
         <ul className="space-y-2">
           <li>
             <NavLink

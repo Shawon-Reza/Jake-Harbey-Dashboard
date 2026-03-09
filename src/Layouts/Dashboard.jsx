@@ -8,7 +8,7 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex font-nunito">
+    <div className="flex font-poppins">
       {!sidebarOpen && (
         <button
           className="lg:hidden absolute top-4 left-4 z-30 bg-primary rounded-full p-2 shadow-lg"
@@ -49,7 +49,7 @@ export default function Dashboard() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      <div className="flex flex-col flex-1 font-nunito h-screen overflow-y-auto">
+      <div className="flex flex-col flex-1 font-poppins h-screen overflow-y-auto">
         <Navbar />
         <Outlet />
       </div>

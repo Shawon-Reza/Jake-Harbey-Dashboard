@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        nunito: ["Poppins", "serif"],
+        poppins: ["Poppins", "serif"],
         outfit: ["Outfit", "serif"],
       },
       colors: {
