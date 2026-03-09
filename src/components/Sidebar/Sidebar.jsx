@@ -25,8 +25,9 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 font-poppins mt-10">
-        <ul className="space-y-2">
-          <li className="px-8 py-2">
+        <ul className="space-y-3">
+          <h1 className="px-12">GENERAL</h1>
+          <li className="px-8">
             <NavLink
               to={"/"}
               className="flex items-center hover:bg-[#0ACCFF] text-[#FFFCFC] px-4 py-4 rounded-lg"
@@ -35,8 +36,8 @@ export default function Sidebar() {
               Dashboard
             </NavLink>
           </li>
-        
-          <li className="px-8 py-2">
+
+          <li className="px-8">
             <NavLink
               to={"/inbox"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
@@ -45,26 +46,8 @@ export default function Sidebar() {
               Inbox
             </NavLink>
           </li>
-          {/* <li>
+          <li className="px-8">
             <NavLink
-              to={"/workout"}
-              className="flex items-center px-8 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC]  "
-            >
-              <LuDumbbell className="text-xl mr-3 -rotate-45" />
-              Workout Management
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={"/subscription"}
-              className="flex items-center px-8 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC]  "
-            >
-              <PiShoppingBagOpenBold className="mr-3 text-xl" />
-              Subscription
-            </NavLink>
-          </li> */}
-          <li className="px-8 py-2">
-           <NavLink
               to={"/jobs"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
@@ -72,7 +55,7 @@ export default function Sidebar() {
               Jobs
             </NavLink>
           </li>
-            <li className="px-8 py-2">
+          <li className="px-8">
             <NavLink
               to={"/clients"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
@@ -81,13 +64,23 @@ export default function Sidebar() {
               Technicians
             </NavLink>
           </li>
-          <li className="px-8 py-2">
+          <li className="px-8 mb-4">
             <NavLink
               to={"/customers"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
               <Users className="mr-3 text-2xl" />
               Customers
+            </NavLink>
+          </li>
+          <h1 className="px-12 pt-4">TOOLS</h1>
+          <li className="px-8">
+            <NavLink
+              to={"/settings"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+            >
+              <LuSettings className="mr-3 text-2xl" />
+              Account & Settings
             </NavLink>
           </li>
         </ul>
