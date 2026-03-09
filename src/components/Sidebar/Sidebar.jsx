@@ -7,7 +7,7 @@ import {
 } from "react-icons/pi";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { LuCircleUserRound, LuDumbbell, LuSettings } from "react-icons/lu";
-import { LogOut } from "lucide-react";
+import { BriefcaseBusiness, House, LogOut, Users } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.png";
@@ -19,48 +19,36 @@ export default function Sidebar() {
     dispatch(logout());
   };
   return (
-    <div className=" bg-primary text-white h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-72">
+    <div className=" bg-primary text-[#FFFCFC] h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-72">
       <div className="p-10 mx-auto">
         <img src={logo} alt="" />
       </div>
 
       <nav className="flex-1 font-poppins mt-10">
         <ul className="space-y-2">
-          <li>
+          <li className="px-8 py-2">
             <NavLink
               to={"/"}
-              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
+              className="flex items-center hover:bg-[#0ACCFF] text-[#FFFCFC] px-4 py-4 rounded-lg"
             >
-              <RxDashboard className="mr-3 text-2xl" />
+              <House className="mr-3 text-2xl" />
               Dashboard
             </NavLink>
           </li>
-          <li>
+        
+          <li className="px-8 py-2">
             <NavLink
-              to={"/clients"}
-              className={({ isActive }) =>
-                isActive || location.pathname.startsWith("/clients")
-                  ? "flex items-center px-8 py-4 bg-gradient-to-r from-[#0E4269] via-[#00B5CA] to-[#FECB2C] text-white"
-                  : "flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white"
-              }
+              to={"/inbox"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
-              <LuCircleUserRound className="mr-3 text-2xl" />
-              User
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={"/subscription"}
-              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
-            >
-              <TbDiamond className="mr-3 text-2xl" />
-              Monetization
+              <BriefcaseBusiness className="mr-3 text-2xl" />
+              Inbox
             </NavLink>
           </li>
           {/* <li>
             <NavLink
               to={"/workout"}
-              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
+              className="flex items-center px-8 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC]  "
             >
               <LuDumbbell className="text-xl mr-3 -rotate-45" />
               Workout Management
@@ -69,19 +57,37 @@ export default function Sidebar() {
           <li>
             <NavLink
               to={"/subscription"}
-              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
+              className="flex items-center px-8 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC]  "
             >
               <PiShoppingBagOpenBold className="mr-3 text-xl" />
               Subscription
             </NavLink>
           </li> */}
-          <li>
-            <NavLink
-              to={"/settings"}
-              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
+          <li className="px-8 py-2">
+           <NavLink
+              to={"/jobs"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
-              <LuSettings className="mr-3 text-2xl" />
-              Settings
+              <BriefcaseBusiness className="mr-3 text-2xl" />
+              Jobs
+            </NavLink>
+          </li>
+            <li className="px-8 py-2">
+            <NavLink
+              to={"/clients"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+            >
+              <Users className="mr-3 text-2xl" />
+              Technicians
+            </NavLink>
+          </li>
+          <li className="px-8 py-2">
+            <NavLink
+              to={"/customers"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+            >
+              <Users className="mr-3 text-2xl" />
+              Customers
             </NavLink>
           </li>
         </ul>
@@ -89,7 +95,7 @@ export default function Sidebar() {
       <Link to={"/login"}>
         <button
           onClick={handleLogout}
-          className="flex items-center px-8 py-8 text-xl w-full mx-auto text-white"
+          className="flex items-center px-8 py-8 text-xl w-full mx-auto text-[#FFFCFC]"
         >
           <LogOut className="mr-3" />
           Logout
