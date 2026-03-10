@@ -131,7 +131,7 @@ const SignIn = () => {
           </form>
 
           {/* Social Login */}
-          <div className="mt-6 space-y-3">
+          {/* <div className="mt-6 space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                 <FaApple className="text-2xl" />
@@ -144,15 +144,15 @@ const SignIn = () => {
                 </span>
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
-          <p className="text-center text-sm text-gray-600 mt-6">
+          {/* <p className="text-center text-sm text-gray-600 mt-6">
             Don't have an account?{" "}
             <a href="#" className="font-semibold text-primary hover:underline">
               Sign Up
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
       {/* Right side - Hero Image */}

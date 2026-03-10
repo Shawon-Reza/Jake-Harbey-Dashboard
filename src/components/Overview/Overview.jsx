@@ -1,200 +1,345 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
+  LineChart,
+  Line,
   AreaChart,
   Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
-  ResponsiveContainer,
+  CartesianGrid,
   Tooltip,
-} from "recharts";
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
+import { Calendar, ArrowUpRight, ArrowDownRight, CloudDownload } from 'lucide-react';
 
-import Revenue from "../Charts/Revenue";
-import up from "../../assets/images/up.png";
-import down from "../../assets/images/down.png";
 const Overview = () => {
-  const [sortBy, setSortBy] = useState("yearly");
+  const [revenueTarget, setRevenueTarget] = useState(200);
+  const [showSetTarget, setShowSetTarget] = useState(false);
 
-  // Fetch data from APIs
-
-  const data = [
-    { name: "5k", value: 25 },
-    { name: "10k", value: 30 },
-    { name: "15k", value: 45 },
-    { name: "20k", value: 95, highlight: true, tooltipValue: "64,364" },
-    { name: "25k", value: 55 },
-    { name: "30k", value: 50 },
-    { name: "35k", value: 60 },
-    { name: "40k", value: 25 },
-    { name: "45k", value: 70 },
-    { name: "50k", value: 65 },
-    { name: "55k", value: 55 },
-    { name: "60k", value: 60 },
+  // Revenue trend data
+  const revenueTrendData = [
+    { month: 'Jan', value: 2500, target: 1800 },
+    { month: 'Feb', value: 2400, target: 1900 },
+    { month: 'Mar', value: 2800, target: 2500 },
+    { month: 'Apr', value: 2600, target: 2300 },
+    { month: 'May', value: 2600, target: 2300 },
+    { month: 'Jun', value: 3200, target: 2600 },
+    { month: 'Jul', value: 3100, target: 3000 },
+    { month: 'Aug', value: 2700, target: 3300 },
+    { month: 'Sep', value: 3400, target: 2800 },
+    { month: 'Oct', value: 3600, target: 3500 },
+    { month: 'Nov', value: 3500, target: 3400 },
+    { month: 'Dec', value: 3800, target: 4100 },
   ];
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      if (data.highlight) {
-        return (
-          <div className="bg-slate-800 text-white px-3 py-2 rounded shadow-lg text-sm">
-            {data.tooltipValue}
-          </div>
-        );
-      }
-    }
-    return null;
+  const CustomLabel = (props) => {
+    const { viewBox } = props;
+    return (
+      <g>
+        <rect
+          x={viewBox.x + 10}
+          y={viewBox.y - 65}
+          width={180}
+          height={55}
+          rx={12}
+          fill="#BCF328"
+        />
+        <text
+          x={viewBox.x + 25}
+          y={viewBox.y - 45}
+          fill="#888888"
+          className="text-sm"
+        >
+          Average year value
+        </text>
+        <text
+          x={viewBox.x + 25}
+          y={viewBox.y - 20}
+          fill="#1f2937"
+          className="text-lg font-bold"
+        >
+          £ 339,091,888
+        </text>
+      </g>
+    );
   };
 
-  const metrics = [
-    {
-      title: "Total Users",
-      value: "40,689",
-      percentage: "8.5%",
-      text: "Up from saturday",
-      image: up,
-    },
-    {
-      title: "Total Active Users",
-      value: "10,293",
-      percentage: "1.3%",
-      text: " Up from past week",
-      image: up,
-    },
-    {
-      title: "Total Revenue",
-      value: "$89,000",
-      percentage: "4.3%",
-      text: " Down from yesterday",
-      image: down,
-    },
+  // Customer trend data
+  const customerTrendData = [
+    { day: 'Mon', value: 4000 },
+    { day: 'Tue', value: 3000 },
+    { day: 'Wed', value: 4200 },
+    { day: 'Thu', value: 2780 },
+    { day: 'Fri', value: 4100 },
+    { day: 'Sat', value: 2490 },
+    { day: 'Sun', value: 4900 },
+  ];
+
+  // Technicians overview data
+  const techniciansData = [
+    { id: 1, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 5 },
+    { id: 2, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 4 },
+    { id: 3, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 2 },
+    { id: 4, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 2 },
+    { id: 5, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 3 },
   ];
 
   return (
-    <div className="p-6 h-[calc(100vh-64px)] overflow-y-scroll">
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 max-w-6xl mx-auto bg-white">
-        {metrics.map((metric, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-xl p-6 border-2 border-gray shadow-md transition-shadow duration-200"
-          >
-            <div className="space-y-3">
-              <h3 className="text-xl font-bold text-dark/70 tracking-wide">
-                {metric.title}
-              </h3>
-              <div className="text-3xl font-bold text-primary">
-                {metric.value}
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Admin Dashboard</h1>
+
+        {/* First Row - Main Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Monthly Revenue Target */}
+          <div className="bg-white col-span-2 rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xl text-[#454545]">Monthly Revenue Target</h3>
+              <button
+                onClick={() => setShowSetTarget(!showSetTarget)}
+                className="text-teal-600 hover:text-teal-700 flex items-center gap-1"
+              >
+                <span className="text-xl">+</span> Set Target
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 mb-2">
+              <div>
+                <p className="text-gray-400 text-sm font-medium mb-1">In Progress</p>
+                <p className="text-3xl text-orange-500">£{revenueTarget}</p>
               </div>
-              <div className="text-xl font-bold text-dark/70 flex items-center">
-                <img src={metric.image} alt="" />{" "}
-                <span
-                  className={`text-[#00B69B] mx-2 ${
-                    metric.percentage === "4.3%"
-                      ? "text-[#F93C65]"
-                      : "text-[#00B69B]"
-                  }`}
-                >
-                  {metric.percentage}
-                </span>{" "}
-                {metric.text}
+              <div className="text-right">
+                <p className="text-gray-400 text-sm font-medium mb-1">Target</p>
+                <p className="text-3xl text-green-600">£500,0</p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
 
-      <div className="max-w-6xl mx-auto mt-10">
-        <div className="bg-white rounded-xl p-6 mb-10 shadow-md border-2 border-gray">
-          {/* Chart Header */}
-          <div className="flex justify-between items-start mb-8">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Total Revenue
-              </h2>
-              <div className="flex items-center space-x-8">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-gray-800"></div>
-                  <span className="text-sm font-medium text-gray-700">
-                    This year
-                  </span>
+            <div className="relative mt-4">
+              <div className="w-full bg-black/20 rounded-full h-4 overflow-hidden">
+                <div
+                  className="bg-primary h-full rounded-full relative"
+                  style={{ width: '55%' }}
+                >
                 </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="text-sm border border-dark/40 rounded-md px-3 py-1 bg-white text-dark/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              >
-                <option value="september">September</option>
-                <option value="october">October</option>
-                <option value="november">November</option>
-                <option value="december">December</option>
-                <option value="january">January</option>
-                <option value="february">February</option>
-                <option value="march">March</option>
-                <option value="april">April</option>
-                <option value="may">May</option>
-                <option value="june">June</option>
-                <option value="july">July</option>
-                <option value="august">August</option>
-              </select>
+              {/* Custom Handle */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-[#D9D9D9] rounded-full border-4 border-white shadow-md cursor-pointer"
+                style={{ left: 'calc(55% - 20px)' }}
+              ></div>
             </div>
           </div>
 
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={data}
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="colorGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#0E4269" stopOpacity={0.65} />
-                    <stop
-                      offset="100%"
-                      stopColor="#e2e8f0"
-                      stopOpacity={0.05}
-                    />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
-                  dy={10}
-                />
-                <YAxis
-                  domain={[0, 100]}
-                  tickFormatter={(value) => `${value}%`}
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#9ca3af" }}
-                  dx={-10}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#0E4269"
-                  strokeWidth={2}
-                  fill="url(#colorGradient)"
-                  dot={{ fill: "#0E4269", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: "#0E4269" }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          {/* Total Revenue */}
+          <div className="bg-[#0D7E8A] rounded-[32px] p-6 flex flex-col justify-between text-white shadow-md relative overflow-hidden">
+            <div className="flex justify-between items-start mb-8">
+              <h3 className="font-semibold text-lg opacity-90">Total Revenue</h3>
+              <ArrowUpRight className="w-6 h-6 opacity-80" />
+            </div>
+            <div className="flex items-end justify-between gap-2">
+              <p className="text-4xl font-medium">£7,100</p>
+              <div className=''>  <span className="text-red-500 text-sm font-semibold flex items-end">
+                <ArrowDownRight className="w-4 h-4" /> 1.5%
+              </span>
+                <span className="text-white/60 text-xs">From last week</span></div>
+            </div>
+          </div>
+
+          {/* Total Jobs */}
+          <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm relative">
+            <div className="flex justify-between items-start mb-8">
+              <h3 className="font-semibold text-gray-500 text-lg">Total jobs</h3>
+              <ArrowUpRight className="w-6 h-6 text-gray-400" />
+            </div>
+            <div className="flex items-end justify-between gap-2">
+              <p className="text-4xl font-medium">14</p>
+              <div className='flex flex-col items-end'>  <span className="text-green-600 text-sm font-semibold flex items-center">
+                <ArrowUpRight className="w-4 h-4" /> 10.6%
+              </span>
+                <span className="text-gray-400 text-xs">From last week</span></div>
+            </div>
           </div>
         </div>
 
-        {/* Revenue Component */}
-        <Revenue />
+        {/* Second Row - Charts and Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+          {/* Revenue Trend Chart */}
+          <div className="lg:col-span-2 bg-white col-span-2 rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-2xl font-semibold text-[#454545]">Revenue Trend</h3>
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E7E7E7] rounded-xl shadow-xl shadow-gray-100/50 text-teal-600 text-sm font-medium">
+                Calendar <Calendar className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueTrendData} margin={{ top: 70, right: 30, left: 20, bottom: 0 }}>
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9ca3af', fontSize: 16 }}
+                    dy={5}
+                  />
+                  <YAxis hide domain={['dataMin - 500', 'dataMax + 1000']} />
+                  <Tooltip content={() => null} />
+                  <ReferenceLine
+                    x="Aug"
+                    stroke="#818cf8"
+                    strokeWidth={5}
+                    label={<CustomLabel />}
+                  />
+                  <Line
+                    type="natural"
+                    dataKey="target"
+                    stroke="#1A9C9C"
+                    strokeWidth={4}
+                    strokeDasharray="8 8"
+                    dot={false}
+                  />
+                  <Line
+                    type="natural"
+                    dataKey="value"
+                    stroke="#F68528"
+                    strokeWidth={4}
+                    dot={{ r: 3, fill: '#F68528', strokeWidth: 0 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 grid-rows-2 col-span-2 gap-6">
+            {/* Active Jobs */}
+            <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-semibold text-gray-500 text-sm">Active jobs</h3>
+                <ArrowUpRight className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-4xl font-medium">100</p>
+                <div className='flex flex-col items-end'>
+                  <span className="text-green-500 text-sm font-semibold flex items-center">
+                    <ArrowUpRight className="w-4 h-4" /> 1.5%
+                  </span>
+                  <span className="text-gray-400 text-xs">From last week</span></div>
+              </div>
+            </div>
+
+            {/* Attention Required */}
+            <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-semibold text-gray-500 text-sm">Attention Required</h3>
+                <ArrowUpRight className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-4xl font-medium text-[#0D7E8A]">50</p>
+                <p className="text-red-500 text-sm font-medium">Need action</p></div>
+            </div>
+            {/* Total Customer */}
+            <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-semibold text-gray-500 text-sm">Total customer</h3>
+                <ArrowUpRight className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-4xl font-medium">50</p>
+                <div className='flex flex-col items-end'>
+                  <span className="text-green-600 text-sm font-semibold flex items-center">
+                    <ArrowUpRight className="w-4 h-4" /> 10.6%
+                  </span>
+                  <span className="text-gray-400 text-xs">From last week</span></div>
+              </div>
+            </div>
+
+            {/* Total Technicians */}
+            <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-semibold text-gray-500 text-sm">Total Technicians</h3>
+                <ArrowUpRight className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-4xl font-medium">£7,100</p>
+                <div className='flex flex-col items-end'>
+                  <span className="text-red-500 text-xs font-semibold flex items-center">
+                    <ArrowDownRight className="w-4 h-4" /> 1.5%
+                  </span>
+                  <span className="text-gray-400 text-xs">From last week</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Third Row - More Stats and Customer Trend */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Customer Trend */}
+          <div className="bg-white rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
+            <div className="flex justify-between items-center mb-10">
+              <h3 className="text-2xl font-semibold text-[#454545]">Customer Trend</h3>
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E7E7E7] rounded-xl shadow-xl shadow-gray-100/10 text-[#0D7E8A] text-sm font-medium">
+                Calendar <Calendar className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="h-96">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={customerTrendData} barSize={60} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                  <XAxis
+                    dataKey="day"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#454545', fontSize: 16 }}
+                    dy={10}
+                  />
+                  <YAxis hide />
+                  <Tooltip cursor={{ fill: 'transparent' }} />
+                  <Bar dataKey="value" fill="#1A9C9C" radius={[15, 15, 15, 15]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+
+          {/* Technicians Overview */}
+          <div className="bg-white rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm">
+            <div className="flex justify-between items-center mb-8 pb-4 border-b border-[#F5F5F5]">
+              <h3 className="text-2xl font-semibold text-[#F68528]">Technicians overview</h3>
+              <div className="flex items-center gap-8">
+                <span className="text-gray-500 text-sm font-semibold">3 assigned jobs</span>
+                <button className="text-gray-800 text-sm font-bold flex items-center gap-2">
+                  Action <ArrowDownRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {[
+                { name: 'Mike Johnson', id: 'ORD001', jobs: 5 },
+                { name: 'Mike Johnson', id: 'ORD001', jobs: 4 },
+                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
+                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
+                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
+              ].map((tech, idx) => (
+                <div key={idx} className="flex items-center justify-between py-2">
+                  <div className="flex flex-col">
+                    <span className="text-gray-700 font-semibold text-lg">{tech.name}</span>
+                    <span className="text-gray-400 text-sm">#{tech.id}</span>
+                  </div>
+                  <div className="flex items-center gap-20">
+                    <span className="text-gray-600 font-bold text-xl">{tech.jobs}</span>
+                    <button className="bg-[#28A745] hover:bg-green-600 text-white px-8 py-2 rounded-xl text-sm font-bold shadow-lg shadow-green-100">
+                      View
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -17,6 +17,8 @@ import WorkoutUpdate from "../components/Workout/WorkoutUpdate";
 import { PrivateRoute } from "./PrivetRoute";
 import AddPackage from "../components/Subscription/AddPackage";
 import EditPackage from "../components/Subscription/EditPackage";
+import Inbox from "../components/Inbox/Inbox";
+import Jobs from "../components/Jobs/Jobs";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Overview />,
+      },
+      {
+        path: "/inbox",
+        element: <Inbox />,
+      },
+      {
+        path: "/jobs",
+        element: <Jobs />,
       },
       {
         path: "/clients",
