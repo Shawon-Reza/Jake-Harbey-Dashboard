@@ -467,7 +467,7 @@ export default function Jobs() {
                                 <div className="flex items-center gap-2 text-gray-400 font-bold text-sm">
                                     <Clock size={18} className="text-gray-300" /> {job.date}
                                 </div>
-                                <div className={`text-3xl font-extrabold ${job.amount === 'TBD' ? 'text-gray-300' : 'text-[#2A2A2A]'}`}>
+                                <div className={`text-3xl ${job.amount === 'TBD' ? 'text-gray-300' : 'text-[#2A2A2A]'}`}>
                                     {job.amount}
                                 </div>
                             </div>

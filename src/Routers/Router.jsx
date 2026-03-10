@@ -19,6 +19,7 @@ import AddPackage from "../components/Subscription/AddPackage";
 import EditPackage from "../components/Subscription/EditPackage";
 import Inbox from "../components/Inbox/Inbox";
 import Jobs from "../components/Jobs/Jobs";
+import Technicians from "../components/Technicians/Technicians";
 
 export const router = createBrowserRouter([
   {
@@ -39,8 +40,8 @@ export const router = createBrowserRouter([
         element: <Jobs />,
       },
       {
-        path: "/clients",
-        element: <Clients />,
+        path: "/technicians",
+        element: <Technicians />,
       },
       {
         path: "/clients/:id",

@@ -116,9 +116,9 @@ const SignIn = () => {
                 />
                 <span className="text-gray-700">Remember for 30 days</span>
               </label>
-              <a href="#" className="hover:underline text-primary">
+              {/* <a href="#" className="hover:underline text-primary">
                 Forgot Password
-              </a>
+              </a> */}
             </div>
 
             {/* Login Button */}

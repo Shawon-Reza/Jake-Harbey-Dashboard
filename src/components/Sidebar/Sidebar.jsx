@@ -57,7 +57,7 @@ export default function Sidebar() {
           </li>
           <li className="px-8">
             <NavLink
-              to={"/clients"}
+              to={"/technicians"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
               <Users className="mr-3 text-2xl" />
