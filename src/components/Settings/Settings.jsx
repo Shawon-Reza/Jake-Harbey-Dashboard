@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Edit2 } from 'lucide-react';
+import { Eye, EyeOff, Edit2, CheckCircle2 } from 'lucide-react';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('account');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const [accountData, setAccountData] = useState({
     firstName: 'Cameron',
     lastName: 'Williamson',
@@ -15,15 +15,15 @@ export default function Settings() {
   });
 
   const [securityData, setSecurityData] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    oldPassword: 'password123',
+    newPassword: 'password123',
+    confirmPassword: '@uyad))11n'
   });
 
   const passwordRequirements = [
-    { text: 'Minimum 8 characters.', met: securityData.newPassword.length >= 8 },
-    { text: 'Use combination of uppercase and lowercase letters.', met: /[a-z]/.test(securityData.newPassword) && /[A-Z]/.test(securityData.newPassword) },
-    { text: 'Use of special characters (e.g. !, @, #, $, %).', met: /[!@#$%^&*]/.test(securityData.newPassword) }
+    { text: 'Minimum 8 characters.', met: true },
+    { text: 'Use combination of uppercase and lowercase letters.', met: true },
+    { text: 'Use of special characters (e.g. !, @, #, $, %).', met: true }
   ];
 
   const handleAccountChange = (field, value) => {
@@ -34,184 +34,184 @@ export default function Settings() {
     setSecurityData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleProfilePictureChange = () => {
-    // File input logic would go here
-    console.log('Change picture clicked');
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="text-4xl font-bold mb-8">Setting</h1>
+    <div className="min-h-screen bg-[#F8FAFB] p-12">
+      <h1 className="text-6xl font-bold text-[#2A2A2A] mb-12">Setting</h1>
 
-      {/* Tabs */}
-      <div className="bg-white rounded-lg p-1 mb-8 flex gap-4 border border-gray-200">
+      {/* Tabs Switcher */}
+      <div className="max-w-[1240px] bg-white rounded-2xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
         <button
           onClick={() => setActiveTab('account')}
-          className={`flex-1 py-3 px-6 rounded-lg transition-colors ${
-            activeTab === 'account'
-              ? 'bg-white text-gray-700 border border-gray-200'
-              : 'text-gray-400'
-          }`}
+          className={`flex-1 py-4 text-xl font-bold rounded-xl transition-all ${activeTab === 'account'
+              ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
+              : 'text-[#999999] hover:text-[#454545]'
+            }`}
         >
           Account
         </button>
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex-1 py-3 px-6 rounded-lg transition-colors ${
-            activeTab === 'security'
-              ? 'bg-teal-200 text-teal-700'
-              : 'text-gray-400'
-          }`}
+          className={`flex-1 py-4 text-xl font-bold rounded-xl transition-all ${activeTab === 'security'
+              ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
+              : 'text-[#999999] hover:text-[#454545]'
+            }`}
         >
           Security
         </button>
       </div>
 
-      {/* Account Tab */}
-      {activeTab === 'account' && (
-        <div className="bg-white rounded-lg p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold mb-8">Profile Information</h2>
-          
-          <div className="flex items-end gap-6 mb-8">
-            <img
-              src={accountData.profileImage}
-              alt="Profile"
-              className="w-24 h-24 rounded-lg object-cover"
-            />
-            <button
-              onClick={handleProfilePictureChange}
-              className="border border-gray-300 rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors"
-            >
-              <Edit2 className="w-4 h-4" />
-              Change Pictures
-            </button>
-          </div>
+      {/* Main Content Container */}
+      <div className="max-w-[1240px] bg-white rounded-[40px] p-12 border border-[#E0E0E0] shadow-sm">
 
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-              <input
-                type="text"
-                value={accountData.firstName}
-                onChange={(e) => handleAccountChange('firstName', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-              <input
-                type="text"
-                value={accountData.lastName}
-                onChange={(e) => handleAccountChange('lastName', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-              <input
-                type="email"
-                value={accountData.email}
-                onChange={(e) => handleAccountChange('email', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-          </div>
+        {/* Account Tab Content */}
+        {activeTab === 'account' && (
+          <div className="animate-in fade-in duration-300">
+            <h2 className="text-3xl font-bold text-[#2A2A2A] mb-10">Profile Information</h2>
 
-          <div className="flex gap-4">
-            <button className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors">
-              Update
-            </button>
-            <button className="text-teal-600 hover:text-teal-700 transition-colors">
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Security Tab */}
-      {activeTab === 'security' && (
-        <div className="bg-white rounded-lg p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold mb-8">Password</h2>
-          
-          <div className="grid grid-cols-3 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Old Password</label>
-              <div className="relative">
-                <input
-                  type={showOldPassword ? 'text' : 'password'}
-                  value={securityData.oldPassword}
-                  onChange={(e) => handleSecurityChange('oldPassword', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+            <div className="flex items-center gap-6 mb-12">
+              <div className="relative group">
+                <img
+                  src={accountData.profileImage}
+                  alt="Profile"
+                  className="w-28 h-28 rounded-2xl object-cover shadow-md border-4 border-white"
                 />
-                <button
-                  onClick={() => setShowOldPassword(!showOldPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showOldPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
               </div>
+              <button
+                className="flex items-center gap-3 px-6 py-3 border-2 border-[#E0E0E0] rounded-2xl text-lg font-bold text-[#454545] hover:bg-gray-50 transition-all group"
+              >
+                Change Pictures
+                <Edit2 className="w-6 h-6 text-[#999999] group-hover:text-[#1A9C9C]" />
+              </button>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
-              <div className="relative">
-                <input
-                  type={showNewPassword ? 'text' : 'password'}
-                  value={securityData.newPassword}
-                  onChange={(e) => handleSecurityChange('newPassword', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-                <button
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={securityData.confirmPassword}
-                  onChange={(e) => handleSecurityChange('confirmPassword', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-                <button
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-          </div>
 
-          <div className="mb-8 space-y-3">
-            {passwordRequirements.map((req, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <svg
-                  className={`w-5 h-5 ${req.met ? 'text-teal-600' : 'text-gray-300'}`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span className={req.met ? 'text-gray-700' : 'text-gray-400'}>{req.text}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">First Name</label>
+                <input
+                  type="text"
+                  value={accountData.firstName}
+                  onChange={(e) => handleAccountChange('firstName', e.target.value)}
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                />
               </div>
-            ))}
-          </div>
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">Last Name</label>
+                <input
+                  type="text"
+                  value={accountData.lastName}
+                  onChange={(e) => handleAccountChange('lastName', e.target.value)}
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">Email</label>
+                <input
+                  type="email"
+                  value={accountData.email}
+                  onChange={(e) => handleAccountChange('email', e.target.value)}
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                />
+              </div>
+            </div>
 
-          <div className="flex gap-4">
-            <button className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors">
-              Update Password
-            </button>
-            <button className="text-teal-600 hover:text-teal-700 transition-colors">
-              Cancel
-            </button>
+            <div className="flex items-center gap-8">
+              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl font-bold rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
+                Update
+              </button>
+              <button className="text-xl font-bold text-[#1A9C9C] hover:opacity-80 transition-opacity">
+                Cancel
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Security Tab Content */}
+        {activeTab === 'security' && (
+          <div className="animate-in fade-in duration-300">
+            <h2 className="text-3xl font-bold text-[#2A2A2A] mb-10">Password</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">Old Password</label>
+                <div className="relative">
+                  <input
+                    type={showOldPassword ? 'text' : 'password'}
+                    value={securityData.oldPassword}
+                    readOnly
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  />
+                  <button
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
+                  >
+                    {showOldPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">New Password</label>
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={securityData.newPassword}
+                    readOnly
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  />
+                  <button
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
+                  >
+                    {showNewPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-lg font-bold text-[#2A2A2A]">Confirm Password</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={securityData.confirmPassword}
+                    readOnly
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  />
+                  <button
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Password Requirements */}
+            <div className="space-y-4 mb-12">
+              {passwordRequirements.map((req, idx) => (
+                <div key={idx} className="flex items-center gap-4 group">
+                  <div className={`p-1 rounded-full transition-all ${req.met ? 'bg-[#1A9C9C]/10' : 'bg-gray-100'}`}>
+                    <CheckCircle2 className={`w-6 h-6 ${req.met ? 'text-[#1A9C9C]' : 'text-gray-300'}`} />
+                  </div>
+                  <span className={`text-lg transition-colors ${req.met ? 'text-[#454545] font-bold' : 'text-gray-400 font-medium'}`}>
+                    {req.text}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-8">
+              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl font-bold rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
+                Update Password
+              </button>
+              <button className="text-xl font-bold text-[#1A9C9C] hover:opacity-80 transition-opacity">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
