@@ -20,6 +20,8 @@ import EditPackage from "../components/Subscription/EditPackage";
 import Inbox from "../components/Inbox/Inbox";
 import Jobs from "../components/Jobs/Jobs";
 import Technicians from "../components/Technicians/Technicians";
+import Customers from "../components/Customers/Customers";
+import Notifications from "../components/Notifications/Notifications";
 
 export const router = createBrowserRouter([
   {
@@ -48,10 +50,18 @@ export const router = createBrowserRouter([
         element: <UserProfileDashboard />,
       },
       {
+        path: "/customers",
+        element: <Customers />,
+      },
+      {
         path: "/subscription",
         element: <Subscription />,
       },
-      
+
+      {
+        path: "/notifications",
+        element: <Notifications />,
+      },
       {
         path: "/settings",
         element: <Settings />,
