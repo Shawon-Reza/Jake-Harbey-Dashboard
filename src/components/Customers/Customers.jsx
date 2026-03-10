@@ -204,7 +204,7 @@ export default function Customers() {
 
         return (
             <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
-                <div className="max-w-[1240px] mx-auto p-12">
+                <div className="max-w-7xl mx-auto p-12">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-10">
                         <button
@@ -231,7 +231,7 @@ export default function Customers() {
                                 </div>
                             </div>
                             <div className="text-white relative z-10">
-                                <h2 className="text-5xl font-bold mb-4 tracking-tight">{customer.name}</h2>
+                                <h2 className="text-5xl mb-4 tracking-tight">{customer.name}</h2>
                                 <p className="text-teal-50/70 font-medium text-lg">Customer since {customer.since}</p>
                             </div>
                         </div>
@@ -387,18 +387,18 @@ export default function Customers() {
 
     return (
         <div className="flex-1 overflow-y-auto bg-white p-12">
-            <div className="max-w-[1400px] mx-auto">
-                <h1 className="text-6xl font-medium text-[#2A2A2A] tracking-tight mb-16">Customers</h1>
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-4xl font-medium text-[#2A2A2A] mb-8">Customers</h1>
 
                 {/* Table Container */}
                 <div className="bg-white rounded-[40px] border border-[#E7E7E7] shadow-2xl shadow-gray-200/50 overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-[#F9FBFC] border-b border-[#F0F0F0]">
-                                <th className="px-10 py-8 text-gray-400 font-bold text-xs uppercase tracking-widest">Customer</th>
-                                <th className="px-10 py-8 text-gray-400 font-bold text-xs uppercase tracking-widest">Contact</th>
-                                <th className="px-10 py-8 text-gray-400 font-bold text-xs uppercase tracking-widest">Location</th>
-                                <th className="px-10 py-8 text-gray-400 font-bold text-xs uppercase tracking-widest">History</th>
+                                <th className="px-10 py-8 text-gray-400 font-bold uppercase tracking-widest">Customer</th>
+                                <th className="px-10 py-8 text-gray-400 font-bold uppercase tracking-widest">Contact</th>
+                                <th className="px-10 py-8 text-gray-400 font-bold uppercase tracking-widest">Location</th>
+                                <th className="px-10 py-8 text-gray-400 font-bold uppercase tracking-widest">History</th>
                                 <th className="px-10 py-8 w-20"></th>
                             </tr>
                         </thead>
@@ -415,14 +415,14 @@ export default function Customers() {
                                                 {getInitial(customer.name)}
                                             </div>
                                             <div>
-                                                <p className="text-2xl font-bold text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{customer.name}</p>
-                                                <p className="text-gray-400 font-bold text-sm tracking-tight">Since {customer.since}</p>
+                                                <p className="text-2xl text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{customer.name}</p>
+                                                <p className="text-gray-400 text-sm tracking-tight">Since {customer.since}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-10 py-10">
                                         <div className="space-y-3">
-                                            <p className="flex items-center gap-3 text-lg font-bold text-[#454545]">
+                                            <p className="flex items-center gap-3 text-lg text-[#454545]">
                                                 <Phone className="w-5 h-5 text-gray-300" /> {customer.phone}
                                             </p>
                                             <p className="flex items-center gap-3 text-base font-medium text-gray-400">
@@ -431,7 +431,7 @@ export default function Customers() {
                                         </div>
                                     </td>
                                     <td className="px-10 py-10">
-                                        <p className="flex items-center gap-3 text-lg font-bold text-[#454545]">
+                                        <p className="flex items-center gap-3 text-lg text-[#454545]">
                                             <MapPin className="w-6 h-6 text-gray-300" /> {customer.location}
                                         </p>
                                     </td>

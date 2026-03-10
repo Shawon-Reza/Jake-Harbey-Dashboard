@@ -133,7 +133,7 @@ const Technicians = () => {
         const tech = selectedTechnician;
         return (
             <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
-                <div className="max-w-[1240px] mx-auto p-12">
+                <div className="max-w-7xl mx-auto p-12">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-10">
                         <button
@@ -306,10 +306,10 @@ const Technicians = () => {
 
     return (
         <div className="flex-1 overflow-y-auto bg-white">
-            <div className="max-w-[1400px] mx-auto p-12">
+            <div className="max-w-7xl mx-auto p-12">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-16">
-                    <h1 className="text-6xl font-medium text-[#2A2A2A] tracking-tight">Technicians</h1>
+                    <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Technicians</h1>
                     <button className="bg-[#1A9C9C] hover:bg-[#158080] text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-50 transition-all flex items-center gap-2">
                         <Plus className="w-5 h-5" /> Add Technician
                     </button>

@@ -417,7 +417,7 @@ export default function Jobs() {
         <div className="flex-1 overflow-y-auto bg-white">
             <div className="max-w-[1400px] mx-auto p-12">
                 <div className="flex items-center justify-between mb-16">
-                    <h1 className="text-6xl font-medium text-[#2A2A2A] tracking-tight">All Jobs</h1>
+                    <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">All Jobs</h1>
                     <button className="bg-[#1A9C9C] hover:bg-[#158080] text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-50 transition-all">
                         New Job
                     </button>

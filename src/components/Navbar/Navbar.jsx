@@ -28,7 +28,7 @@ export default function Navbar() {
           </div>
           <div className="flex flex-col">
             <p className="text-lg font-bold text-[#2A2A2A] leading-tight group-hover:text-[#1A9C9C] transition-colors">Christopher Miller</p>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Admin</p>
+            <p className="text-sm text-gray-400 uppercase tracking-wider">Admin</p>
           </div>
         </div>
       </div>

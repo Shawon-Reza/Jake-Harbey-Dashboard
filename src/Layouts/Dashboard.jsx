@@ -49,7 +49,7 @@ export default function Dashboard() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      <div className="flex flex-col flex-1 font-poppins h-screen overflow-y-auto">
+      <div className="flex flex-col flex-1 font-poppins">
         <Navbar />
         <Outlet />
       </div>

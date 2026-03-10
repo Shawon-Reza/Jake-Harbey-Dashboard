@@ -124,10 +124,10 @@ const Inbox = () => {
     return (
         <div className="flex h-screen bg-gray-50">
             {!selectedJob && (
-                <div className="flex-1 overflow-y-auto bg-white">
-                    <div className="max-w-[1240px] mx-auto p-8">
+                <div className="flex-1 overflow-y-auto  bg-white">
+                    <div className="max-w-7xl mx-auto p-8">
                         <div className="flex justify-between items-center mb-10">
-                            <h1 className="text-5xl font-medium text-[#2A2A2A]">inbox</h1>
+                            <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Inbox</h1>
                             <button className="bg-[#0D7E8A] hover:bg-[#0a6670] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all">
                                 <Plus className="w-5 h-5" /> New Job
                             </button>

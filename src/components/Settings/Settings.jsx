@@ -36,13 +36,13 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFB] p-12">
-      <h1 className="text-6xl font-bold text-[#2A2A2A] mb-12">Setting</h1>
+      <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Setting</h1>
 
       {/* Tabs Switcher */}
-      <div className="max-w-[1240px] bg-white rounded-2xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
+      <div className="max-w-7xl bg-white rounded-2xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
         <button
           onClick={() => setActiveTab('account')}
-          className={`flex-1 py-4 text-xl font-bold rounded-xl transition-all ${activeTab === 'account'
+          className={`flex-1 py-4 text-xl rounded-xl transition-all ${activeTab === 'account'
               ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
               : 'text-[#999999] hover:text-[#454545]'
             }`}
@@ -51,7 +51,7 @@ export default function Settings() {
         </button>
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex-1 py-4 text-xl font-bold rounded-xl transition-all ${activeTab === 'security'
+          className={`flex-1 py-4 text-xl rounded-xl transition-all ${activeTab === 'security'
               ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
               : 'text-[#999999] hover:text-[#454545]'
             }`}
@@ -61,12 +61,12 @@ export default function Settings() {
       </div>
 
       {/* Main Content Container */}
-      <div className="max-w-[1240px] bg-white rounded-[40px] p-12 border border-[#E0E0E0] shadow-sm">
+      <div className="max-w-7xl bg-white rounded-[40px] p-12 border border-[#E0E0E0] shadow-sm">
 
         {/* Account Tab Content */}
         {activeTab === 'account' && (
           <div className="animate-in fade-in duration-300">
-            <h2 className="text-3xl font-bold text-[#2A2A2A] mb-10">Profile Information</h2>
+            <h2 className="text-3xl font-medium text-[#2A2A2A] mb-10">Profile Information</h2>
 
             <div className="flex items-center gap-6 mb-12">
               <div className="relative group">
@@ -91,7 +91,7 @@ export default function Settings() {
                   type="text"
                   value={accountData.firstName}
                   onChange={(e) => handleAccountChange('firstName', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                 />
               </div>
               <div className="space-y-3">
@@ -100,7 +100,7 @@ export default function Settings() {
                   type="text"
                   value={accountData.lastName}
                   onChange={(e) => handleAccountChange('lastName', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                 />
               </div>
               <div className="space-y-3">
@@ -109,16 +109,16 @@ export default function Settings() {
                   type="email"
                   value={accountData.email}
                   onChange={(e) => handleAccountChange('email', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                 />
               </div>
             </div>
 
             <div className="flex items-center gap-8">
-              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl font-bold rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
+              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
                 Update
               </button>
-              <button className="text-xl font-bold text-[#1A9C9C] hover:opacity-80 transition-opacity">
+              <button className="text-xl text-[#1A9C9C] hover:opacity-80 transition-opacity">
                 Cancel
               </button>
             </div>
@@ -128,7 +128,7 @@ export default function Settings() {
         {/* Security Tab Content */}
         {activeTab === 'security' && (
           <div className="animate-in fade-in duration-300">
-            <h2 className="text-3xl font-bold text-[#2A2A2A] mb-10">Password</h2>
+            <h2 className="text-3xl text-[#2A2A2A] mb-10">Password</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
               <div className="space-y-3">
@@ -138,7 +138,7 @@ export default function Settings() {
                     type={showOldPassword ? 'text' : 'password'}
                     value={securityData.oldPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowOldPassword(!showOldPassword)}
@@ -156,7 +156,7 @@ export default function Settings() {
                     type={showNewPassword ? 'text' : 'password'}
                     value={securityData.newPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowNewPassword(!showNewPassword)}
@@ -174,7 +174,7 @@ export default function Settings() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={securityData.confirmPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -193,7 +193,7 @@ export default function Settings() {
                   <div className={`p-1 rounded-full transition-all ${req.met ? 'bg-[#1A9C9C]/10' : 'bg-gray-100'}`}>
                     <CheckCircle2 className={`w-6 h-6 ${req.met ? 'text-[#1A9C9C]' : 'text-gray-300'}`} />
                   </div>
-                  <span className={`text-lg transition-colors ${req.met ? 'text-[#454545] font-bold' : 'text-gray-400 font-medium'}`}>
+                  <span className={`text-lg transition-colors ${req.met ? 'text-[#454545]' : 'text-gray-400 font-medium'}`}>
                     {req.text}
                   </span>
                 </div>
@@ -201,10 +201,10 @@ export default function Settings() {
             </div>
 
             <div className="flex items-center gap-8">
-              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl font-bold rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
+              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
                 Update Password
               </button>
-              <button className="text-xl font-bold text-[#1A9C9C] hover:opacity-80 transition-opacity">
+              <button className="text-xl text-[#1A9C9C] hover:opacity-80 transition-opacity">
                 Cancel
               </button>
             </div>
