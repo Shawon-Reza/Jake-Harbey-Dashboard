@@ -5,18 +5,15 @@ import {
     ChevronRight,
     ArrowLeft,
     Mail,
-    Plus,
-    MoreVertical,
     CheckCircle2,
     Camera,
-    Star,
     Edit3,
     Send,
     Clock,
     Flag,
-    ChevronDown
+    ChevronDown,
+    Wrench
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Inbox = () => {
     const [selectedJob, setSelectedJob] = useState(null);
@@ -119,29 +116,25 @@ const Inbox = () => {
         return colors[letter] || 'bg-gray-300';
     };
 
-    const statusOptions = ['New Lead', 'Active', 'Awaiting Confirmation', 'To Follow Up', 'Inactive'];
-
     return (
         <div className="flex h-screen bg-gray-50">
             {!selectedJob && (
-                <div className="flex-1 overflow-y-auto  bg-white">
+                <div className="flex-1 overflow-y-auto bg-white">
                     <div className="max-w-7xl mx-auto p-8">
                         <div className="flex justify-between items-center mb-10">
                             <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Inbox</h1>
-                            <button className="bg-[#0D7E8A] hover:bg-[#0a6670] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all">
-                                <Plus className="w-5 h-5" /> New Job
-                            </button>
+                         
                         </div>
 
                         {/* Filter Tags */}
                         <div className="flex gap-4 mb-10 overflow-x-auto pb-2">
                             {[
-                                { label: 'Attention', count: 3, color: '#F68528', bg: '#FFF3E0' },
-                                { label: 'New Leads', count: 3, color: '#1976D2', bg: '#E3F2FD' },
-                                { label: 'To Assign', count: 3, color: '#3F51B5', bg: '#E8EAF6' },
-                                { label: 'Follow Up', count: 1, color: '#7B1FA2', bg: '#F3E5F5' }
+                                { label: 'Attention', count: 3, color: '#F59E0B', bg: '#FFF3E0' },
+                                { label: 'New Leads', count: 3, color: '#3B82F6', bg: '#E3F2FD' },
+                                { label: 'To Assign', count: 3, color: '#6366F1', bg: '#E8EAF6' },
+                                { label: 'Follow Up', count: 1, color: '#A855F7', bg: '#F3E5F5' }
                             ].map((tag) => (
-                                <div key={tag.label} className="flex items-center gap-3 px-5 py-2.5 rounded-2xl border border-[#E7E7E7] bg-white shadow-sm whitespace-nowrap cursor-pointer hover:border-gray-300">
+                                <div key={tag.label} className="flex items-center gap-3 px-5 py-2.5 rounded-lg border border-[#E7E7E7] bg-white shadow-sm whitespace-nowrap cursor-pointer hover:border-gray-300">
                                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tag.color }}></div>
                                     <span className="text-[#454545] font-semibold text-sm">{tag.label}</span>
                                     <span className="text-[#2A2A2A] font-bold text-sm ml-1">{tag.count}</span>
@@ -155,9 +148,9 @@ const Inbox = () => {
                                 {['Attention 3', 'New Leads 3', 'To Assign 3', 'Follow Up 1', 'All 12'].map((tab, idx) => (
                                     <button
                                         key={tab}
-                                        className={`pb-4 px-1 font-semibold text-sm whitespace-nowrap transition-all ${idx === 0 ? 'text-[#0D7E8A] border-b-4 border-[#0D7E8A]' : 'text-gray-400 hover:text-gray-600'}`}
+                                        className={`pb-4 px-1 font-semibold whitespace-nowrap transition-all ${idx === 0 ? 'text-[#2563EB] border-b-4 border-[#2563EB]' : 'text-[#6B7280] hover:text-[#2563EB]'}`}
                                     >
-                                        {tab.split(' ')[0]} <span className="opacity-60 ml-0.5">{tab.split(' ')[1]}</span>
+                                        {tab.split(' ')[0]} <span className="ml-0.5">{tab.split(' ')[1]}</span> <span className="ml-0.5">{tab.split(' ')[2]}</span>
                                     </button>
                                 ))}
                             </div>
@@ -177,12 +170,12 @@ const Inbox = () => {
                                 <div
                                     key={job.id}
                                     onClick={() => setSelectedJob(job)}
-                                    className={`group relative border-y border-transparent border-b-[#F5F5F5] hover:bg-[#F0FAFB] px-4 py-6 transition-all cursor-pointer flex items-center gap-6 ${job.id === 2 ? 'bg-[#F0FAFB]' : ''}`}
+                                    className={`group relative border-y border-transparent border-b-[#F5F5F5] hover:bg-[#F0FAFB] px-4 py-6 transition-all cursor-pointer flex items-center gap-6`}
                                 >
                                     <div className="flex items-center gap-6 flex-1 min-w-0">
                                         <div className="flex-shrink-0">
                                             {job.avatar ? (
-                                                <div className={`w-12 h-12 rounded-full ${getAvatarColor(job.avatar)} flex items-center justify-center font-bold text-[#454545] text-lg`}>
+                                                <div className={`w-12 h-12 rounded-full ${getAvatarColor(job.avatar)} flex items-center justify-center font-semibold text-[#454545] text-lg`}>
                                                     {job.avatar}
                                                 </div>
                                             ) : (
@@ -192,18 +185,18 @@ const Inbox = () => {
 
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-3 mb-1">
-                                                <span className="font-bold text-[#2A2A2A] text-lg truncate">{job.customerName}</span>
-                                                <div className="flex items-center gap-1.5 text-gray-400 font-medium text-xs">
-                                                    <MapPin className="w-3.5 h-3.5" /> {job.location}
+                                                <span className="font-semibold text-[#2A2A2A] text-lg truncate">{job.customerName}</span>
+                                                <div className="flex items-center gap-1.5 text-[#9CA3AF] font-medium text-xs">
+                                                    <MapPin size={16} strokeWidth={4.0} /> {job.location}
                                                 </div>
                                             </div>
                                             <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-2 text-[#454545] font-bold text-sm">
-                                                    <Edit3 className="w-4 h-4 text-[#0D7E8A]" /> {job.service}
-                                                </div>
-                                                <p className="text-gray-400 text-xs truncate max-w-[400px]">
+                                                <div className="flex items-center gap-2 text-[#2A2A2A]font-bold text-sm">
+                                                    <Wrench className='text-[#9CA3AF]' size={16} strokeWidth={3.50} /> {job.service}
+                                                <span className="text-gray-400 truncate max-w-[400px]">
                                                     - {job.description}
-                                                </p>
+                                                </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
