@@ -16,8 +16,9 @@ import {
 import { Calendar, ArrowUpRight, ArrowDownRight, CloudDownload } from 'lucide-react';
 
 const Overview = () => {
-  const [revenueTarget, setRevenueTarget] = useState(200);
+  const [revenueTarget, setRevenueTarget] = useState(500.0);
   const [showSetTarget, setShowSetTarget] = useState(false);
+  const [tempTarget, setTempTarget] = useState('000000');
 
   // Revenue trend data
   const revenueTrendData = [
@@ -80,11 +81,11 @@ const Overview = () => {
 
   // Technicians overview data
   const techniciansData = [
-    { id: 1, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 5 },
-    { id: 2, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 4 },
-    { id: 3, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 2 },
-    { id: 4, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 2 },
-    { id: 5, name: 'Mike Johnson', jobId: 'CRB0001', jobs: 3 },
+    { id: 'ORD001', name: 'Mike Johnson', jobs: 5 },
+    { id: 'ORD001', name: 'Mike Johnson', jobs: 4 },
+    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
+    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
+    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
   ];
 
   return (
@@ -96,7 +97,7 @@ const Overview = () => {
         {/* First Row - Main Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Monthly Revenue Target */}
-          <div className="bg-white col-span-2 rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
+          <div className="bg-white col-span-2 rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative overflow-hidden">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-xl text-[#454545]">Monthly Revenue Target</h3>
               <button
@@ -110,18 +111,18 @@ const Overview = () => {
             <div className="grid grid-cols-2 mb-2">
               <div>
                 <p className="text-gray-400 text-sm font-medium mb-1">In Progress</p>
-                <p className="text-3xl text-orange-500">£{revenueTarget}</p>
+                <p className="text-3xl text-orange-500">£200</p>
               </div>
               <div className="text-right">
                 <p className="text-gray-400 text-sm font-medium mb-1">Target</p>
-                <p className="text-3xl text-green-600">£500,0</p>
+                <p className="text-3xl text-green-600">£{revenueTarget}</p>
               </div>
             </div>
 
             <div className="relative mt-4">
               <div className="w-full bg-black/20 rounded-full h-4 overflow-hidden">
                 <div
-                  className="bg-primary h-full rounded-full relative"
+                  className="bg-[#1A9C9C] h-full rounded-full relative"
                   style={{ width: '55%' }}
                 >
                 </div>
@@ -132,35 +133,62 @@ const Overview = () => {
                 style={{ left: 'calc(55% - 20px)' }}
               ></div>
             </div>
+
+            {/* Set Target Overlay */}
+            {showSetTarget && (
+              <div className="absolute inset-0 z-20 bg-[#EAFBFF] flex flex-col items-center justify-center p-6 animate-in fade-in duration-200">
+                <h3 className="text-xl font-bold text-[#1A9C9C] mb-4">Set Monthly Revenue Target</h3>
+                <input
+                  type="text"
+                  value={tempTarget}
+                  onChange={(e) => setTempTarget(e.target.value)}
+                  className="bg-transparent text-4xl text-center text-gray-300 font-medium outline-none mb-6 w-full placeholder:text-gray-200"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setRevenueTarget(tempTarget);
+                    setShowSetTarget(false);
+                  }}
+                  className="bg-[#1A9C9C] text-white px-10 py-2 rounded-xl text-xl font-medium hover:bg-[#158080] transition-colors shadow-lg shadow-teal-100"
+                >
+                  save
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Total Revenue */}
           <div className="bg-[#0D7E8A] rounded-[32px] p-6 flex flex-col justify-between text-white shadow-md relative overflow-hidden">
             <div className="flex justify-between items-start mb-8">
-              <h3 className="font-semibold text-lg opacity-90">Total Revenue</h3>
+              <h3 className="text-lg opacity-90">Total Revenue</h3>
               <ArrowUpRight className="w-6 h-6 opacity-80" />
             </div>
             <div className="flex items-end justify-between gap-2">
               <p className="text-4xl font-medium">£7,100</p>
-              <div className=''>  <span className="text-red-500 text-sm font-semibold flex items-end">
-                <ArrowDownRight className="w-4 h-4" /> 1.5%
-              </span>
-                <span className="text-white/60 text-xs">From last week</span></div>
+              <div>
+                <span className="text-red-500 text-sm font-semibold flex items-end">
+                  <ArrowDownRight className="w-4 h-4" /> 1.5%
+                </span>
+                <span className="text-white/60 text-xs">From last week</span>
+              </div>
             </div>
           </div>
 
           {/* Total Jobs */}
           <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm relative">
             <div className="flex justify-between items-start mb-8">
-              <h3 className="font-semibold text-gray-500 text-lg">Total jobs</h3>
+              <h3 className="text-gray-500 text-lg">Total jobs</h3>
               <ArrowUpRight className="w-6 h-6 text-gray-400" />
             </div>
             <div className="flex items-end justify-between gap-2">
               <p className="text-4xl font-medium">14</p>
-              <div className='flex flex-col items-end'>  <span className="text-green-600 text-sm font-semibold flex items-center">
-                <ArrowUpRight className="w-4 h-4" /> 10.6%
-              </span>
-                <span className="text-gray-400 text-xs">From last week</span></div>
+              <div className="flex flex-col items-end">
+                <span className="text-green-600 text-sm font-semibold flex items-center">
+                  <ArrowUpRight className="w-4 h-4" /> 10.6%
+                </span>
+                <span className="text-gray-400 text-xs">From last week</span>
+              </div>
             </div>
           </div>
         </div>
@@ -168,9 +196,9 @@ const Overview = () => {
         {/* Second Row - Charts and Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
           {/* Revenue Trend Chart */}
-          <div className="lg:col-span-2 bg-white col-span-2 rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
+          <div className="lg:col-span-2 bg-white rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-2xl font-semibold text-[#454545]">Revenue Trend</h3>
+              <h3 className="text-2xl text-[#454545]">Revenue Trend</h3>
               <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E7E7E7] rounded-xl shadow-xl shadow-gray-100/50 text-teal-600 text-sm font-medium">
                 Calendar <Calendar className="w-5 h-5" />
               </button>
@@ -217,58 +245,63 @@ const Overview = () => {
             {/* Active Jobs */}
             <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-semibold text-gray-500 text-sm">Active jobs</h3>
+                <h3 className="text-gray-500 text-lg">Active jobs</h3>
                 <ArrowUpRight className="w-5 h-5 text-gray-400" />
               </div>
               <div className="flex items-end justify-between gap-2">
                 <p className="text-4xl font-medium">100</p>
-                <div className='flex flex-col items-end'>
+                <div className="flex flex-col items-end">
                   <span className="text-green-500 text-sm font-semibold flex items-center">
                     <ArrowUpRight className="w-4 h-4" /> 1.5%
                   </span>
-                  <span className="text-gray-400 text-xs">From last week</span></div>
+                  <span className="text-gray-400 text-xs">From last week</span>
+                </div>
               </div>
             </div>
 
             {/* Attention Required */}
             <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-semibold text-gray-500 text-sm">Attention Required</h3>
+                <h3 className="text-gray-500 text-lg">Attention Required</h3>
                 <ArrowUpRight className="w-5 h-5 text-gray-400" />
               </div>
               <div className="flex items-end justify-between gap-2">
                 <p className="text-4xl font-medium text-[#0D7E8A]">50</p>
-                <p className="text-red-500 text-sm font-medium">Need action</p></div>
+                <p className="text-red-500 text-sm font-medium">Need action</p>
+              </div>
             </div>
+
             {/* Total Customer */}
             <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-semibold text-gray-500 text-sm">Total customer</h3>
+                <h3 className="text-gray-500 text-lg">Total customer</h3>
                 <ArrowUpRight className="w-5 h-5 text-gray-400" />
               </div>
               <div className="flex items-end justify-between gap-2">
                 <p className="text-4xl font-medium">50</p>
-                <div className='flex flex-col items-end'>
+                <div className="flex flex-col items-end">
                   <span className="text-green-600 text-sm font-semibold flex items-center">
                     <ArrowUpRight className="w-4 h-4" /> 10.6%
                   </span>
-                  <span className="text-gray-400 text-xs">From last week</span></div>
+                  <span className="text-gray-400 text-xs">From last week</span>
+                </div>
               </div>
             </div>
 
             {/* Total Technicians */}
             <div className="bg-white rounded-[32px] p-6 flex flex-col justify-between border border-[#E7E7E7] shadow-sm">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-semibold text-gray-500 text-sm">Total Technicians</h3>
+                <h3 className="text-gray-500 text-lg">Total Technicians</h3>
                 <ArrowUpRight className="w-5 h-5 text-gray-400" />
               </div>
               <div className="flex items-end justify-between gap-2">
                 <p className="text-4xl font-medium">£7,100</p>
-                <div className='flex flex-col items-end'>
+                <div className="flex flex-col items-end">
                   <span className="text-red-500 text-xs font-semibold flex items-center">
                     <ArrowDownRight className="w-4 h-4" /> 1.5%
                   </span>
-                  <span className="text-gray-400 text-xs">From last week</span></div>
+                  <span className="text-gray-400 text-xs">From last week</span>
+                </div>
               </div>
             </div>
           </div>
@@ -279,7 +312,7 @@ const Overview = () => {
           {/* Customer Trend */}
           <div className="bg-white rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm relative">
             <div className="flex justify-between items-center mb-10">
-              <h3 className="text-2xl font-semibold text-[#454545]">Customer Trend</h3>
+              <h3 className="text-2xl text-[#454545]">Customer Trend</h3>
               <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E7E7E7] rounded-xl shadow-xl shadow-gray-100/10 text-[#0D7E8A] text-sm font-medium">
                 Calendar <Calendar className="w-5 h-5" />
               </button>
@@ -302,13 +335,12 @@ const Overview = () => {
             </div>
           </div>
 
-
           {/* Technicians Overview */}
           <div className="bg-white rounded-[32px] p-8 border border-[#E7E7E7] shadow-sm">
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-[#F5F5F5]">
-              <h3 className="text-2xl font-semibold text-[#F68528]">Technicians overview</h3>
+              <h3 className="text-2xl text-[#F68528]">Technicians overview</h3>
               <div className="flex items-center gap-8">
-                <span className="text-gray-500 text-sm font-semibold">3 assigned jobs</span>
+                <span className="text-gray-500 text-sm">3 assigned jobs</span>
                 <button className="text-gray-800 text-sm font-bold flex items-center gap-2">
                   Action <ArrowDownRight className="w-4 h-4" />
                 </button>
@@ -316,21 +348,15 @@ const Overview = () => {
             </div>
 
             <div className="space-y-6">
-              {[
-                { name: 'Mike Johnson', id: 'ORD001', jobs: 5 },
-                { name: 'Mike Johnson', id: 'ORD001', jobs: 4 },
-                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
-                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
-                { name: 'Mike Johnson', id: 'ORD001', jobs: 2 },
-              ].map((tech, idx) => (
+              {techniciansData.map((tech, idx) => (
                 <div key={idx} className="flex items-center justify-between py-2">
                   <div className="flex flex-col">
-                    <span className="text-gray-700 font-semibold text-lg">{tech.name}</span>
+                    <span className="text-gray-700 text-lg">{tech.name}</span>
                     <span className="text-gray-400 text-sm">#{tech.id}</span>
                   </div>
                   <div className="flex items-center gap-20">
-                    <span className="text-gray-600 font-bold text-xl">{tech.jobs}</span>
-                    <button className="bg-[#28A745] hover:bg-green-600 text-white px-8 py-2 rounded-xl text-sm font-bold shadow-lg shadow-green-100">
+                    <span className="text-gray-600 text-xl">{tech.jobs}</span>
+                    <button className="bg-[#28A745] hover:bg-green-600 text-white px-8 py-2 rounded-xl text-sm shadow-lg shadow-green-100">
                       View
                     </button>
                   </div>
@@ -339,7 +365,6 @@ const Overview = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

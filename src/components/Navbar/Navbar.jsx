@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function Navbar() {
   return (
-    <div className="flex h-24 px-12 items-center justify-end border-b bg-white border-[#E7E7E7] w-full sticky top-0 z-50">
+    <div className="flex h-24 px-12 py-8 items-center justify-end border-b bg-white border-[#E7E7E7] w-full sticky top-0 z-50">
       <div className="flex items-center gap-10">
         {/* Notification Bell */}
         <Link to="/notifications" className="relative p-2 text-[#1A9C9C] hover:bg-gray-50 rounded-xl transition-colors group">

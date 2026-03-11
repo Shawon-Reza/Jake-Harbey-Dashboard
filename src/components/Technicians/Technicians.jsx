@@ -14,7 +14,8 @@ import {
     ShieldCheck,
     User,
     Settings,
-    MoreVertical
+    MoreVertical,
+    Calendar
 } from 'lucide-react';
 
 const Technicians = () => {
@@ -138,16 +139,14 @@ const Technicians = () => {
                     <div className="flex items-center justify-between mb-10">
                         <button
                             onClick={() => setSelectedTechnician(null)}
-                            className="flex items-center gap-4 text-[#454545] font-bold group transition-all"
+                            className="flex items-center gap-4 text-[#454545] group transition-all"
                         >
                             <div className="p-3 bg-white border border-[#E7E7E7] rounded-2xl shadow-sm group-hover:shadow-md transition-shadow">
                                 <ArrowLeft className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="text-xl">Technician Profile</span>
                         </button>
-                        <button className="bg-[#1A9C9C] hover:bg-[#158080] text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-50 transition-all flex items-center gap-2">
-                            <Plus className="w-5 h-5" /> Add Technician
-                        </button>
+                       
                     </div>
 
                     {/* Profile Header Banner */}
@@ -165,8 +164,8 @@ const Technicians = () => {
                             </div>
                         </div>
                         <div className="text-white relative z-10">
-                            <h2 className="text-5xl font-bold mb-4 tracking-tight">{tech.name}</h2>
-                            <span className="inline-flex items-center bg-[#E4F8FB] text-[#28A745] px-6 py-2 rounded-full text-sm font-bold shadow-sm">
+                            <h2 className="text-5xl mb-4 tracking-tight">{tech.name}</h2>
+                            <span className="inline-flex items-center bg-[#E4F8FB] text-[#28A745] px-6 py-2 rounded-full text-sm shadow-sm">
                                 Available
                             </span>
                         </div>
@@ -229,13 +228,13 @@ const Technicians = () => {
                                         <div className="flex items-center justify-center gap-3 text-[#1976D2] mb-2 font-bold uppercase tracking-tight text-xs">
                                             <Building2 size={16} /> Active Jobs
                                         </div>
-                                        <div className="text-4xl font-extrabold text-[#1976D2]">{tech.activeJobs}</div>
+                                        <div className="text-4xl text-[#1976D2]">{tech.activeJobs}</div>
                                     </div>
                                     <div className="p-6 bg-[#E8F5E9] rounded-[24px] border border-green-50 text-center">
                                         <div className="flex items-center justify-center gap-3 text-[#2E7D32] mb-2 font-bold uppercase tracking-tight text-xs">
                                             <CheckCircle2 size={16} /> Completed
                                         </div>
-                                        <div className="text-4xl font-extrabold text-[#2E7D32]">{tech.completedJobs}</div>
+                                        <div className="text-4xl text-[#2E7D32]">{tech.completedJobs}</div>
                                     </div>
                                 </div>
                             </div>
@@ -282,7 +281,7 @@ const Technicians = () => {
                                         ))}
                                     </div>
                                     <div className="flex items-center gap-6 min-w-[200px] justify-end">
-                                        <span className="px-5 py-2 bg-[#E8F5E9] text-[#28A745] rounded-full text-[11px] font-extrabold uppercase tracking-wider">
+                                        <span className="px-5 py-2 bg-[#E8F5E9] text-[#28A745] rounded-full text-[11px] uppercase tracking-wider">
                                             {job.status}
                                         </span>
                                         <div className="flex items-center gap-2 text-gray-400 font-bold text-sm min-w-[120px]">
@@ -310,9 +309,7 @@ const Technicians = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-16">
                     <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Technicians</h1>
-                    <button className="bg-[#1A9C9C] hover:bg-[#158080] text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-50 transition-all flex items-center gap-2">
-                        <Plus className="w-5 h-5" /> Add Technician
-                    </button>
+                
                 </div>
 
                 {/* Search and Filters */}
@@ -321,7 +318,7 @@ const Technicians = () => {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-300 group-focus-within:text-[#1A9C9C] transition-colors" />
                         <input
                             type="text"
-                            placeholder="Search by name, specialty..."
+                            placeholder="Search by name, specialty..."fg
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-16 pr-8 py-5 bg-[#F9FBFC] border border-[#E7E7E7] rounded-[24px] text-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#1A9C9C]/5 focus:border-[#1A9C9C]/20 transition-all"
@@ -362,7 +359,7 @@ const Technicians = () => {
                                         <div className={`absolute bottom-0 right-0 w-5 h-5 border-4 border-white rounded-full ${tech.status === 'available' ? 'bg-[#28A745]' : 'bg-orange-400'}`}></div>
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-2xl text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{tech.name}</h3>
+                                        <h3 className=" text-2xl text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{tech.name}</h3>
                                         <p className="text-gray-400 font-bold text-sm flex items-center gap-2 uppercase tracking-tighter">
                                             <MapPin className="w-3.5 h-3.5" /> {tech.license}
                                         </p>
@@ -379,7 +376,7 @@ const Technicians = () => {
                                         <Building2 className="w-5 h-5 text-[#1A9C9C]" />
                                     </div>
                                     <div>
-                                        <p className="text-3xl font-extrabold text-[#2A2A2A]">{tech.activeJobs}</p>
+                                        <p className="text-3xl text-[#2A2A2A]">{tech.activeJobs}</p>
                                         <p className="text-[11px] font-bold text-gray-400 uppercase tracking-tight">Active Jobs</p>
                                     </div>
                                 </div>
@@ -393,7 +390,7 @@ const Technicians = () => {
                             </div>
 
                             <div>
-                                <p className="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-4">Specialties</p>
+                                <p className="text-[11px] text-gray-400 uppercase tracking-widest mb-4">Specialties</p>
                                 <div className="flex flex-wrap gap-2.5">
                                     {tech.specialties.map((specialty, idx) => (
                                         <span
