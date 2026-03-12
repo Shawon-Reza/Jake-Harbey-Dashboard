@@ -204,7 +204,7 @@ export default function Customers() {
 
         return (
             <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
-                <div className="max-w-7xl mx-auto p-12">
+                <div className=" mx-auto p-12">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-10">
                         <button
@@ -387,7 +387,7 @@ export default function Customers() {
 
     return (
         <div className="flex-1 overflow-y-auto bg-white p-12">
-            <div className="max-w-7xl mx-auto">
+            <div className=" mx-auto">
                 <h1 className="text-4xl font-medium text-[#2A2A2A] mb-8">Customers</h1>
 
                 {/* Table Container */}
