@@ -1,13 +1,13 @@
 import { Link, NavLink } from "react-router-dom";
 import "./Sidebar.css";
-import { LuCircleUserRound, LuDumbbell, LuSettings } from "react-icons/lu";
+import { LuSettings } from "react-icons/lu";
 import { BriefcaseBusiness, House, LogOut, Users } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.png";
 
 export default function Sidebar() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
   const handleLogout = () => {
     dispatch(logout());
   };
