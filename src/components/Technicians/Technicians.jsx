@@ -15,7 +15,8 @@ import {
     User,
     Settings,
     MoreVertical,
-    Calendar
+    Calendar,
+    Briefcase
 } from 'lucide-react';
 
 const Technicians = () => {
@@ -134,7 +135,7 @@ const Technicians = () => {
         const tech = selectedTechnician;
         return (
             <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
-                <div className="max-w-7xl mx-auto p-12">
+                <div className=" mx-auto p-12">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-10">
                         <button
@@ -305,31 +306,30 @@ const Technicians = () => {
 
     return (
         <div className="flex-1 overflow-y-auto bg-white">
-            <div className="max-w-7xl mx-auto p-12">
+            <div className=" mx-auto p-12">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-16">
+                <div className="flex items-center justify-between mb-8">
                     <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Technicians</h1>
                 
                 </div>
 
                 {/* Search and Filters */}
-                <div className="flex flex-col md:flex-row gap-6 mb-16">
+                <div className="flex flex-col md:flex-row gap-6 mb-8">
                     <div className="flex-1 relative group">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-300 group-focus-within:text-[#1A9C9C] transition-colors" />
                         <input
                             type="text"
                             placeholder="Search by name, specialty..."fg
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-16 pr-8 py-5 bg-[#F9FBFC] border border-[#E7E7E7] rounded-[24px] text-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#1A9C9C]/5 focus:border-[#1A9C9C]/20 transition-all"
+                            className="w-1/2 pl-16 pr-8 py-3 bg-[#F9FBFC] border border-[#E7E7E7] rounded-xl text-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#1A9C9C]/5 focus:border-[#1A9C9C]/20 transition-all"
                         />
                     </div>
-                    <div className="flex gap-4 p-1.5 bg-[#F9FBFC] rounded-[28px] border border-[#E7E7E7]">
+                    <div className="flex gap-4 p-1.5 bg-[#F9FBFC] rounded-xl border border-[#E7E7E7]">
                         {['All', 'Available', 'On Job'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setFilterTab(tab.toLowerCase().replace(' ', '-'))}
-                                className={`px-10 py-4 rounded-[24px] font-bold text-lg transition-all ${filterTab === tab.toLowerCase().replace(' ', '-')
+                                className={`px-6 py-3 rounded-xl text-lg transition-all ${filterTab === tab.toLowerCase().replace(' ', '-')
                                     ? 'bg-[#1A9C9C] text-white shadow-lg shadow-teal-100'
                                     : 'text-gray-400 hover:text-gray-600'
                                     }`}
@@ -341,14 +341,14 @@ const Technicians = () => {
                 </div>
 
                 {/* Technicians Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredTechnicians.map((tech) => (
                         <div
                             key={tech.id}
                             onClick={() => setSelectedTechnician(tech)}
-                            className="bg-white border border-[#E7E7E7] rounded-[32px] p-8 hover:shadow-2xl hover:shadow-gray-200/50 cursor-pointer transition-all duration-300 group relative border-b-4 border-b-transparent hover:border-b-[#1A9C9C]"
+                            className="bg-white border border-[#E7E7E7] rounded-2xl p-6 hover:shadow-2xl hover:shadow-gray-200/50 cursor-pointer transition-all duration-300 group relative hover:border-b-[#1A9C9C]"
                         >
-                            <div className="flex items-start justify-between mb-8">
+                            <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-5">
                                     <div className="relative">
                                         <img
@@ -359,43 +359,37 @@ const Technicians = () => {
                                         <div className={`absolute bottom-0 right-0 w-5 h-5 border-4 border-white rounded-full ${tech.status === 'available' ? 'bg-[#28A745]' : 'bg-orange-400'}`}></div>
                                     </div>
                                     <div>
-                                        <h3 className=" text-2xl text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{tech.name}</h3>
-                                        <p className="text-gray-400 font-bold text-sm flex items-center gap-2 uppercase tracking-tighter">
-                                            <MapPin className="w-3.5 h-3.5" /> {tech.license}
+                                        <h3 className="text-2xl text-[#2A2A2A] mb-1 group-hover:text-[#1A9C9C] transition-colors">{tech.name}</h3>
+                                        <p className="text-[#6B7280] text-sm flex items-center gap-2 uppercase">
+                                            <MapPin className="w-4 h-4" strokeWidth={3.50} /> {tech.license}
                                         </p>
                                     </div>
                                 </div>
                                 <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#1A9C9C]/10 transition-colors">
-                                    <ChevronRight className="w-6 h-6 text-gray-300 group-hover:text-[#1A9C9C] transition-all" />
+                                    <ChevronRight className="w-6 h-6 text-[#6B7280] group-hover:text-[#1A9C9C] transition-all" />
                                 </div>
                             </div>
 
-                            <div className="mb-10 p-6 bg-[#F9FBFC] rounded-[24px] border border-[#F5F5F5] flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-white rounded-xl shadow-sm">
-                                        <Building2 className="w-5 h-5 text-[#1A9C9C]" />
+                            <div className="mb-6 p-5 bg-[#F9FAFB] rounded-xl border border-[#F3F4F6] flex items-center justify-between">
+                                <div className="flex items-start gap-4 flex-col">
+                                    <div className="flex items-center gap-4">
+                                        <Briefcase className="w-5 h-5 text-[#1A9C9C]" strokeWidth={3.50} />
+                                        <p className="text-3xl text-[#2A2A2A]">{tech.activeJobs}</p>
                                     </div>
                                     <div>
-                                        <p className="text-3xl text-[#2A2A2A]">{tech.activeJobs}</p>
-                                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-tight">Active Jobs</p>
+                                        <p className="text-xs text-[#6B7280]">Active Jobs</p>
                                     </div>
                                 </div>
-                                <div className="h-10 w-px bg-gray-200"></div>
-                                <div className="flex items-center gap-4 pr-4">
-                                    <div className="text-right">
-                                        <p className="text-xl font-bold text-[#2A2A2A]">{tech.completedJobs}</p>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase">Total</p>
-                                    </div>
-                                </div>
+                           
                             </div>
 
                             <div>
-                                <p className="text-[11px] text-gray-400 uppercase tracking-widest mb-4">Specialties</p>
+                                <p className="text-sm text-gray-400 font-semibold mb-4">Specialties</p>
                                 <div className="flex flex-wrap gap-2.5">
                                     {tech.specialties.map((specialty, idx) => (
                                         <span
                                             key={idx}
-                                            className="bg-[#E4F8FB] text-[#818cf8] px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm border border-blue-50/50"
+                                            className="bg-[#EFF6FF] text-primary px-4 py-2.5 rounded-xl text-xs font-medium shadow-sm border border-[#DBEAFE]"
                                         >
                                             {specialty}
                                         </span>
