@@ -1,18 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import "./Sidebar.css";
-import {
-  PiChartPieSliceFill,
-  PiForkKnifeBold,
-  PiShoppingBagOpenBold,
-} from "react-icons/pi";
-import { HiOutlineUserGroup } from "react-icons/hi";
 import { LuCircleUserRound, LuDumbbell, LuSettings } from "react-icons/lu";
 import { BriefcaseBusiness, House, LogOut, Users } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.png";
-import { TbDiamond } from "react-icons/tb";
-import { RxDashboard } from "react-icons/rx";
+
 export default function Sidebar() {
   const dispatch = useDispatch();
   const handleLogout = () => {
