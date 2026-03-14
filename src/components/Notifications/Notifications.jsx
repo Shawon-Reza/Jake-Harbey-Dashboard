@@ -140,16 +140,16 @@ export default function Notifications() {
             <div className="max-w-[1200px] mx-auto mb-8">
                 <div className="flex items-center justify-between mb-10">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-5xl font-bold text-[#2A2A2A]">Notifications</h1>
-                        <span className="bg-[#FF4D4D] text-white px-4 py-1.5 rounded-2xl text-lg font-bold">
+                        <h1 className="text-3xl text-[#2A2A2A]">Notifications</h1>
+                        <span className="bg-[#FF4D4D] text-white px-4 py-1 rounded-full">
                             5 new
                         </span>
                     </div>
                     <button
                         onClick={markAllAsRead}
-                        className="text-[#1A9C9C] flex items-center gap-3 text-2xl font-bold hover:opacity-80 transition-opacity"
+                        className="text-[#1A9C9C] flex items-center gap-3 text-xl hover:opacity-80 transition-opacity"
                     >
-                        <Check size={32} strokeWidth={3} />
+                        <Check size={24} strokeWidth={3} />
                         Mark all as read
                     </button>
                 </div>
@@ -158,7 +158,7 @@ export default function Notifications() {
                 <div className="flex gap-12 border-b border-[#E0E0E0] relative">
                     <button
                         onClick={() => setActiveTab('all')}
-                        className={`pb-4 px-2 flex items-center gap-3 text-xl font-bold transition-all relative ${activeTab === 'all' ? 'text-[#1A9C9C]' : 'text-gray-400'
+                        className={`pb-4 px-2 flex items-center gap-3 text-xl transition-all relative ${activeTab === 'all' ? 'text-[#1A9C9C]' : 'text-gray-400'
                             }`}
                     >
                         All
@@ -172,7 +172,7 @@ export default function Notifications() {
                     </button>
                     <button
                         onClick={() => setActiveTab('unread')}
-                        className={`pb-4 px-2 flex items-center gap-3 text-xl font-bold transition-all relative ${activeTab === 'unread' ? 'text-[#1A9C9C]' : 'text-gray-400'
+                        className={`pb-4 px-2 flex items-center gap-3 text-xl transition-all relative ${activeTab === 'unread' ? 'text-[#1A9C9C]' : 'text-gray-400'
                             }`}
                     >
                         Unread
@@ -188,12 +188,12 @@ export default function Notifications() {
             </div>
 
             {/* Notifications List Container */}
-            <div className="max-w-[1200px] mx-auto bg-white rounded-[32px] border border-[#E0E0E0] overflow-hidden shadow-sm">
+            <div className="max-w-[1200px] mx-auto bg-white rounded-2xl border border-[#E0E0E0] overflow-hidden shadow-sm">
                 <div className="divide-y divide-[#F0F0F0]">
                     {filteredNotifications.map((notification) => (
                         <div
                             key={notification.id}
-                            className={`flex items-center gap-6 px-10 py-8 transition-colors ${notification.unread ? 'bg-[#F9FBFC]' : 'bg-white'
+                            className={`flex items-center gap-6 px-10 py-6 transition-colors ${notification.unread ? 'bg-[#F9FBFC]' : 'bg-white'
                                 }`}
                         >
                             <div className="flex-shrink-0">
@@ -201,12 +201,12 @@ export default function Notifications() {
                             </div>
 
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-xl font-bold text-[#2A2A2A]">{notification.title}</h3>
-                                <p className="text-[#666666] text-lg mt-1">{notification.description}</p>
+                                <h3 className="text-xl text-[#2A2A2A]">{notification.title}</h3>
+                                <p className="text-[#666666] mt-1">{notification.description}</p>
                             </div>
 
                             <div className="flex items-center gap-6">
-                                <span className="text-[#999999] text-base font-bold whitespace-nowrap">{notification.time}</span>
+                                <span className="text-[#999999] text-base whitespace-nowrap">{notification.time}</span>
                                 <div className="flex items-center justify-center w-6">
                                     {notification.unread && (
                                         <div className="w-3 h-3 rounded-full bg-[#00B4D8] shadow-sm shadow-[#00B4D8]/30"></div>

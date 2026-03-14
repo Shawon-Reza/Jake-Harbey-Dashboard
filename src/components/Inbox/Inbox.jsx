@@ -18,11 +18,6 @@ import {
     Briefcase,
     PenTool
 } from 'lucide-react';
-import car1 from '../../assets/images/car1.png';
-import car2 from '../../assets/images/car2.png';
-import car3 from '../../assets/images/car3.png';
-import car4 from '../../assets/images/car4.png';
-import mechanic from '../../assets/images/mechanic.png';
 import JobDetails from '../Shared/JobDetails';
 
 const Inbox = () => {
@@ -111,8 +106,8 @@ const Inbox = () => {
         { name: 'Kevin Durant', dist: '22.5 mi', active: 5, rating: 4.9 },
     ]);
 
-    const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-    const [currentStatus, setCurrentStatus] = useState(null);
+    const [activeTab, setActiveTab] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleAssignTech = (techName) => {
         setTechnicians(prev => prev.map(tech => ({
@@ -125,7 +120,6 @@ const Inbox = () => {
         if (selectedJob) {
             setSelectedJob(prev => ({ ...prev, status: [status] }));
         }
-        setShowStatusDropdown(false);
     };
 
     const updateJobProgress = (newProgress) => {
@@ -171,6 +165,46 @@ const Inbox = () => {
         { id: 7, label: 'Completed' },
     ];
 
+    // Filter Logic
+    const filteredJobs = jobs.filter(job => {
+        // Tab Filtering
+        const matchesTab = activeTab === 'All' || job.status.some(s => {
+            if (activeTab === 'Attention') return s === 'Requires Attention';
+            if (activeTab === 'New Leads') return s === 'New Lead';
+            if (activeTab === 'To Assign') return s === 'To Assign';
+            if (activeTab === 'Follow Up') return s === 'To Follow Up';
+            return false;
+        });
+
+        // Search Filtering
+        const searchLower = searchQuery.toLowerCase();
+        const matchesSearch = 
+            job.customerName.toLowerCase().includes(searchLower) ||
+            job.service.toLowerCase().includes(searchLower) ||
+            job.location.toLowerCase().includes(searchLower) ||
+            job.description.toLowerCase().includes(searchLower);
+
+        return matchesTab && matchesSearch;
+    });
+
+    // Dynamic Tab Counts
+    const getTabCount = (tabName) => {
+        if (tabName === 'All') return jobs.length;
+        if (tabName === 'Attention') return jobs.filter(j => j.status.includes('Requires Attention')).length;
+        if (tabName === 'New Leads') return jobs.filter(j => j.status.includes('New Lead')).length;
+        if (tabName === 'To Assign') return jobs.filter(j => j.status.includes('To Assign')).length;
+        if (tabName === 'Follow Up') return jobs.filter(j => j.status.includes('To Follow Up')).length;
+        return 0;
+    };
+
+    const tabs = [
+        { label: 'Attention', internalName: 'Attention' },
+        { label: 'New Leads', internalName: 'New Leads' },
+        { label: 'To Assign', internalName: 'To Assign' },
+        { label: 'Follow Up', internalName: 'Follow Up' },
+        { label: 'All', internalName: 'All' }
+    ];
+
     return (
         <div className="flex bg-gray-50">
             {!selectedJob && (
@@ -199,13 +233,18 @@ const Inbox = () => {
 
                         {/* Tabs and Search */}
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-                            <div className="flex gap-8 border-b border-[#F5F5F5] w-full md:w-auto">
-                                {['Attention 3', 'New Leads 3', 'To Assign 3', 'Follow Up 1', 'All 12'].map((tab, idx) => (
+                            <div className="flex gap-8 border-b border-[#F5F5F5] w-full md:w-auto overflow-x-auto">
+                                {tabs.map((tab) => (
                                     <button
-                                        key={tab}
-                                        className={`pb-4 px-1 font-semibold whitespace-nowrap transition-all ${idx === 0 ? 'text-[#2563EB] border-b-4 border-[#2563EB]' : 'text-[#6B7280] hover:text-[#2563EB]'}`}
+                                        key={tab.internalName}
+                                        onClick={() => setActiveTab(tab.internalName)}
+                                        className={`pb-4 px-1 font-semibold whitespace-nowrap transition-all ${
+                                            activeTab === tab.internalName 
+                                                ? 'text-[#2563EB] border-b-4 border-[#2563EB]' 
+                                                : 'text-[#6B7280] hover:text-[#2563EB]'
+                                        }`}
                                     >
-                                        {tab.split(' ')[0]} <span className="ml-0.5">{tab.split(' ')[1]}</span> <span className="ml-0.5">{tab.split(' ')[2]}</span>
+                                        {tab.label} <span className="ml-0.5">{getTabCount(tab.internalName)}</span>
                                     </button>
                                 ))}
                             </div>
@@ -213,6 +252,8 @@ const Inbox = () => {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                 <input
                                     type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search name, service, ..."
                                     className="w-full pl-12 pr-4 py-3.5 bg-[#F9FBFC] border border-[#E7E7E7] rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D7E8A]/20 transition-all font-medium"
                                 />
@@ -221,7 +262,12 @@ const Inbox = () => {
 
                         {/* Jobs List */}
                         <div className="space-y-1">
-                            {jobs.map((job) => (
+                            {filteredJobs.length === 0 ? (
+                                <div className="p-8 text-center text-gray-500">
+                                    No jobs found matching your criteria.
+                                </div>
+                            ) : (
+                                filteredJobs.map((job) => (
                                 <div
                                     key={job.id}
                                     onClick={() => setSelectedJob(job)}
@@ -283,7 +329,7 @@ const Inbox = () => {
                                         <ChevronRight className="w-5 h-5 text-[#9CA3AF] group-hover:text-[#0D7E8A] transition-colors" />
                                     </div>
                                 </div>
-                            ))}
+                            )))}
                         </div>
                     </div>
                 </div>

@@ -14,8 +14,10 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { Calendar, ArrowUpRight, ArrowDownRight, CloudDownload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Overview = () => {
+  const navigate = useNavigate();
   const [revenueTarget, setRevenueTarget] = useState(500.0);
   const [showSetTarget, setShowSetTarget] = useState(false);
   const [tempTarget, setTempTarget] = useState('000000');
@@ -81,11 +83,11 @@ const Overview = () => {
 
   // Technicians overview data
   const techniciansData = [
-    { id: 'ORD001', name: 'Mike Johnson', jobs: 5 },
-    { id: 'ORD001', name: 'Mike Johnson', jobs: 4 },
-    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
-    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
-    { id: 'ORD001', name: 'Mike Johnson', jobs: 2 },
+    { id: 'ORD001', name: 'Marcus Johnson', jobs: 5 },
+    { id: 'ORD002', name: 'Sarah Williams', jobs: 4 },
+    { id: 'ORD003', name: 'David Chen', jobs: 2 },
+    { id: 'ORD004', name: 'Emma Thompson', jobs: 2 },
+    { id: 'ORD005', name: 'James Wilson', jobs: 2 },
   ];
 
   return (
@@ -340,9 +342,9 @@ const Overview = () => {
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-[#F5F5F5]">
               <h3 className="text-2xl text-[#F68528]">Technicians overview</h3>
               <div className="flex items-center gap-8">
-                <span className="text-gray-500 text-sm">3 assigned jobs</span>
+                <span className="text-gray-500 text-sm mr-10">Assigned jobs</span>
                 <button className="text-gray-800 text-sm font-bold flex items-center gap-2">
-                  Action <ArrowDownRight className="w-4 h-4" />
+                  Action
                 </button>
               </div>
             </div>
@@ -356,7 +358,10 @@ const Overview = () => {
                   </div>
                   <div className="flex items-center gap-20">
                     <span className="text-gray-600 text-xl">{tech.jobs}</span>
-                    <button className="bg-[#28A745] hover:bg-green-600 text-white px-8 py-2 rounded-xl text-sm shadow-lg shadow-green-100">
+                    <button 
+                      onClick={() => navigate('/technicians', { state: { selectedTechnicianName: tech.name } })}
+                      className="bg-[#28A745] hover:bg-green-600 text-white px-8 py-2 rounded-xl text-sm shadow-lg shadow-green-100"
+                    >
                       View
                     </button>
                   </div>

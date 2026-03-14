@@ -32,6 +32,8 @@ const JobDetails = ({
     technicians = []
 }) => {
     const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+    const [isFollowUp, setIsFollowUp] = useState(false);
+    const [isFlagged, setIsFlagged] = useState(false);
 
     if (!job) return null;
 
@@ -112,11 +114,25 @@ const JobDetails = ({
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <button className="flex items-center gap-2 px-5 py-3.5 bg-white border border-[#E7E7E7] rounded-lg shadow-sm text-sm text-[#454545] hover:shadow-md transition-all">
-                            <Clock className="w-5 h-5" /> Mark to Follow Up
+                        <button 
+                            onClick={() => setIsFollowUp(!isFollowUp)}
+                            className={`flex items-center gap-2 px-5 py-3.5 border rounded-lg shadow-sm text-sm transition-all ${
+                                isFollowUp 
+                                    ? 'bg-[#1A9C9C] border-[#1A9C9C] text-white' 
+                                    : 'bg-white border-[#E7E7E7] text-[#454545] hover:shadow-md'
+                            }`}
+                        >
+                            <Clock className="w-5 h-5" /> {isFollowUp ? 'Marked to Follow Up' : 'Mark to Follow Up'}
                         </button>
-                        <button className="flex items-center gap-2 px-5 py-3.5 bg-white border border-[#E7E7E7] rounded-lg shadow-sm text-sm text-[#454545] hover:shadow-md transition-all">
-                            <Flag className="w-5 h-5" /> Flag Attention
+                        <button 
+                            onClick={() => setIsFlagged(!isFlagged)}
+                            className={`flex items-center gap-2 px-5 py-3.5 border rounded-lg shadow-sm text-sm transition-all ${
+                                isFlagged 
+                                    ? 'bg-[#EF4444] border-[#EF4444] text-white' 
+                                    : 'bg-white border-[#E7E7E7] text-[#454545] hover:shadow-md'
+                            }`}
+                        >
+                            <Flag className="w-5 h-5" /> {isFlagged ? 'Flagged Attention' : 'Flag Attention'}
                         </button>
                     </div>
                 </div>
@@ -135,7 +151,7 @@ const JobDetails = ({
                         <img src="https://ui-avatars.com/api/?name=James+Wilson&background=818cf8&color=fff" className="w-10 h-10 rounded-full border-2 border-[#818cf8]" />
                         <div className="flex items-center gap-2">
                             <span className="text-[#4B5563] text-lg">Assigned to</span>
-                            <span className="text-[#4B5563] text-lg">{job.assignment || 'James Wilson'}</span>
+                            <span className="text-[#4B5563] text-lg">James Wilson</span>
                         </div>
                     </div>
                 </div>
