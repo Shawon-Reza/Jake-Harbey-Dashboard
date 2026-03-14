@@ -36,7 +36,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFB] p-12">
-      <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Setting</h1>
+      <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Settings</h1>
 
       {/* Tabs Switcher */}
       <div className="max-w-7xl bg-white rounded-2xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
@@ -61,12 +61,12 @@ export default function Settings() {
       </div>
 
       {/* Main Content Container */}
-      <div className="max-w-7xl bg-white rounded-[40px] p-12 border border-[#E0E0E0] shadow-sm">
+      <div className="max-w-7xl bg-white rounded-2xl p-8 border border-[#E0E0E0] shadow-sm">
 
         {/* Account Tab Content */}
         {activeTab === 'account' && (
           <div className="animate-in fade-in duration-300">
-            <h2 className="text-3xl font-medium text-[#2A2A2A] mb-10">Profile Information</h2>
+            <h2 className="text-2xl font-medium text-[#2A2A2A] mb-10">Profile Information</h2>
 
             <div className="flex items-center gap-6 mb-12">
               <div className="relative group">
@@ -77,7 +77,7 @@ export default function Settings() {
                 />
               </div>
               <button
-                className="flex items-center gap-3 px-6 py-3 border-2 border-[#E0E0E0] rounded-2xl text-lg font-bold text-[#454545] hover:bg-gray-50 transition-all group"
+                className="flex items-center gap-3 px-6 py-3 border-2 border-[#E0E0E0] rounded-2xl text-lg text-[#454545] hover:bg-gray-50 transition-all group"
               >
                 Change Pictures
                 <Edit2 className="w-6 h-6 text-[#999999] group-hover:text-[#1A9C9C]" />
@@ -86,7 +86,7 @@ export default function Settings() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">First Name</label>
+                <label className="block text-lg text-[#2A2A2A]">First Name</label>
                 <input
                   type="text"
                   value={accountData.firstName}
@@ -95,7 +95,7 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">Last Name</label>
+                <label className="block text-lg text-[#2A2A2A]">Last Name</label>
                 <input
                   type="text"
                   value={accountData.lastName}
@@ -104,7 +104,7 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">Email</label>
+                <label className="block text-lg text-[#2A2A2A]">Email</label>
                 <input
                   type="email"
                   value={accountData.email}
@@ -132,13 +132,13 @@ export default function Settings() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">Old Password</label>
+                <label className="block text-lg text-[#2A2A2A]">Old Password</label>
                 <div className="relative">
                   <input
                     type={showOldPassword ? 'text' : 'password'}
                     value={securityData.oldPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowOldPassword(!showOldPassword)}
@@ -150,13 +150,13 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">New Password</label>
+                <label className="block text-lg text-[#2A2A2A]">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPassword ? 'text' : 'password'}
                     value={securityData.newPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowNewPassword(!showNewPassword)}
@@ -168,13 +168,13 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-lg font-bold text-[#2A2A2A]">Confirm Password</label>
+                <label className="block text-lg text-[#2A2A2A]">Confirm Password</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={securityData.confirmPassword}
                     readOnly
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-bold text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
+                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
