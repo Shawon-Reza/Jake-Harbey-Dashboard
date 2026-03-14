@@ -30,20 +30,16 @@ export default function Settings() {
     setAccountData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSecurityChange = (field, value) => {
-    setSecurityData(prev => ({ ...prev, [field]: value }));
-  };
-
   return (
     <div className="min-h-screen bg-[#F8FAFB] p-12">
       <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Settings</h1>
 
       {/* Tabs Switcher */}
-      <div className="max-w-7xl bg-white rounded-2xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
+      <div className="max-w-7xl bg-white rounded-xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
         <button
           onClick={() => setActiveTab('account')}
-          className={`flex-1 py-4 text-xl rounded-xl transition-all ${activeTab === 'account'
-              ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
+          className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'account'
+              ? 'bg-[#BBE2E2] text-[#1A9C9C]'
               : 'text-[#999999] hover:text-[#454545]'
             }`}
         >
@@ -51,8 +47,8 @@ export default function Settings() {
         </button>
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex-1 py-4 text-xl rounded-xl transition-all ${activeTab === 'security'
-              ? 'bg-[#1A9C9C]/10 text-[#1A9C9C]'
+          className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'security'
+              ? 'bg-[#BBE2E2] text-[#1A9C9C]'
               : 'text-[#999999] hover:text-[#454545]'
             }`}
         >
@@ -128,11 +124,11 @@ export default function Settings() {
         {/* Security Tab Content */}
         {activeTab === 'security' && (
           <div className="animate-in fade-in duration-300">
-            <h2 className="text-3xl text-[#2A2A2A] mb-10">Password</h2>
+            <h2 className="text-2xl text-[#2A2A2A] mb-10">Password</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
               <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">Old Password</label>
+                <label className="block text-[#2A2A2A]">Old Password</label>
                 <div className="relative">
                   <input
                     type={showOldPassword ? 'text' : 'password'}
@@ -150,7 +146,7 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">New Password</label>
+                <label className="block text-[#2A2A2A]">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPassword ? 'text' : 'password'}
@@ -168,7 +164,7 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">Confirm Password</label>
+                <label className="block text-[#2A2A2A]">Confirm Password</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -187,9 +183,9 @@ export default function Settings() {
             </div>
 
             {/* Password Requirements */}
-            <div className="space-y-4 mb-12">
+            <div className="space-y-2 mb-12">
               {passwordRequirements.map((req, idx) => (
-                <div key={idx} className="flex items-center gap-4 group">
+                <div key={idx} className="flex items-center gap-2 group">
                   <div className={`p-1 rounded-full transition-all ${req.met ? 'bg-[#1A9C9C]/10' : 'bg-gray-100'}`}>
                     <CheckCircle2 className={`w-6 h-6 ${req.met ? 'text-[#1A9C9C]' : 'text-gray-300'}`} />
                   </div>
@@ -201,10 +197,10 @@ export default function Settings() {
             </div>
 
             <div className="flex items-center gap-8">
-              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
+              <button className="px-10 py-4 bg-[#1A9C9C] text-white rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
                 Update Password
               </button>
-              <button className="text-xl text-[#1A9C9C] hover:opacity-80 transition-opacity">
+              <button className="text-[#1A9C9C] hover:opacity-80 transition-opacity">
                 Cancel
               </button>
             </div>
