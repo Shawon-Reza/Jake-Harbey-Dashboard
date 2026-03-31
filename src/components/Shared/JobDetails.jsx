@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     ArrowLeft,
     ChevronDown,
@@ -14,7 +14,6 @@ import {
     MessageSquare,
     Shield,
     PenTool,
-    Wrench
 } from 'lucide-react';
 
 import car1 from '../../assets/images/car1.png';

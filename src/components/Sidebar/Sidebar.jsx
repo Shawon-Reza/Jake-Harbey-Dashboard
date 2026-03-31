@@ -1,13 +1,19 @@
 import { Link, NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import { LuSettings } from "react-icons/lu";
-import { BriefcaseBusiness, House, LogOut, Users } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  CreditCard,
+  House,
+  LogOut,
+  Users,
+} from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.png";
 
 export default function Sidebar() {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -29,7 +35,15 @@ export default function Sidebar() {
               Dashboard
             </NavLink>
           </li>
-
+          <li className="px-8 mb-4">
+            <NavLink
+              to={"/customers"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+            >
+              <Users className="mr-3 text-2xl" />
+              User Management
+            </NavLink>
+          </li>
           <li className="px-8">
             <NavLink
               to={"/inbox"}
@@ -64,6 +78,15 @@ export default function Sidebar() {
             >
               <Users className="mr-3 text-2xl" />
               Customers
+            </NavLink>
+          </li>
+          <li className="px-8 mb-4">
+            <NavLink
+              to={"/customers"}
+              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+            >
+              <CreditCard className="mr-3 text-2xl" />
+              Subscription Plans
             </NavLink>
           </li>
           <h1 className="px-12 pt-4">TOOLS</h1>
