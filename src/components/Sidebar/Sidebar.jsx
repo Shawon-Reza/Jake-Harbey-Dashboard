@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo.svg";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
