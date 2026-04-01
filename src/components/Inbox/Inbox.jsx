@@ -211,7 +211,7 @@ const Inbox = () => {
                 <div className="flex-1 overflow-y-auto bg-white">
                     <div className=" mx-auto p-8">
                         <div className="flex justify-between items-center mb-10">
-                            <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Inbox</h1>
+                            <h1 className="text-3xl font-medium text-[#2A2A2A]">Inbox</h1>
 
                         </div>
 
