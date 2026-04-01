@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Eye, EyeOff, Edit2, CheckCircle2 } from 'lucide-react';
 
 export default function Settings() {
@@ -26,8 +26,22 @@ export default function Settings() {
     { text: 'Use of special characters (e.g. !, @, #, $, %).', met: true }
   ];
 
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setAccountData(prev => ({ ...prev, profileImage: imageUrl }));
+    }
+  };
+
   const handleAccountChange = (field, value) => {
     setAccountData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSecurityChange = (field, value) => {
+    setSecurityData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -72,7 +86,15 @@ export default function Settings() {
                   className="w-28 h-28 rounded-2xl object-cover shadow-md border-4 border-white"
                 />
               </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept="image/*"
+                className="hidden"
+              />
               <button
+                onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-3 px-6 py-3 border-2 border-[#E0E0E0] rounded-2xl text-lg text-[#454545] hover:bg-gray-50 transition-all group"
               >
                 Change Pictures
@@ -133,7 +155,7 @@ export default function Settings() {
                   <input
                     type={showOldPassword ? 'text' : 'password'}
                     value={securityData.oldPassword}
-                    readOnly
+                    onChange={(e) => handleSecurityChange('oldPassword', e.target.value)}
                     className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
@@ -151,7 +173,7 @@ export default function Settings() {
                   <input
                     type={showNewPassword ? 'text' : 'password'}
                     value={securityData.newPassword}
-                    readOnly
+                    onChange={(e) => handleSecurityChange('newPassword', e.target.value)}
                     className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button
@@ -169,7 +191,7 @@ export default function Settings() {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={securityData.confirmPassword}
-                    readOnly
+                    onChange={(e) => handleSecurityChange('confirmPassword', e.target.value)}
                     className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
                   />
                   <button

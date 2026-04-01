@@ -37,7 +37,7 @@ export default function Sidebar() {
           </li>
           <li className="px-8 mb-4">
             <NavLink
-              to={"/customers"}
+              to={"/users"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
               <Users className="mr-3 text-2xl" />
@@ -82,7 +82,7 @@ export default function Sidebar() {
           </li>
           <li className="px-8 mb-4">
             <NavLink
-              to={"/customers"}
+              to={"/subscription"}
               className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
             >
               <CreditCard className="mr-3 text-2xl" />

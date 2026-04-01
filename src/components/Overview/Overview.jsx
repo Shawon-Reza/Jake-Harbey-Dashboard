@@ -297,7 +297,7 @@ const Overview = () => {
                 <ArrowUpRight className="w-5 h-5 text-gray-400" />
               </div>
               <div className="flex items-end justify-between gap-2">
-                <p className="text-4xl font-medium">£7,100</p>
+                <p className="text-4xl font-medium">20</p>
                 <div className="flex flex-col items-end">
                   <span className="text-red-500 text-xs font-semibold flex items-center">
                     <ArrowDownRight className="w-4 h-4" /> 1.5%

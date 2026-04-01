@@ -11,6 +11,7 @@ import Jobs from "../components/Jobs/Jobs";
 import Technicians from "../components/Technicians/Technicians";
 import Customers from "../components/Customers/Customers";
 import Notifications from "../components/Notifications/Notifications";
+import UserManage from "../components/UserManage/UserManage";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Overview />,
+      },
+      {
+        path: "/users",
+        element: <UserManage />,
       },
       {
         path: "/inbox",

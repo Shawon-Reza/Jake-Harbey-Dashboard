@@ -33,7 +33,7 @@ const JobDetails = ({
     const [showStatusDropdown, setShowStatusDropdown] = useState(false);
     const [isFollowUp, setIsFollowUp] = useState(false);
     const [isFlagged, setIsFlagged] = useState(false);
-
+ 
     if (!job) return null;
 
     // Normalize data for consistent rendering
