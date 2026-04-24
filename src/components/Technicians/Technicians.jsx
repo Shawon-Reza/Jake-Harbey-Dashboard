@@ -8,11 +8,12 @@ import TechnicianFilters from "./TechnicianFilters";
 
 const Technicians = () => {
   const [selectedTechnician, setSelectedTechnician] = useState(null);
-  const [selectedJob, setSelectedJob] = useState(null);
+
   const [filterTab, setFilterTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const { data, isLoading, isError } = useDashboardTechniciansQuery();
+  console.log(data)
 
   const allTechniciansRaw = Array.isArray(data?.all) ? data.all : [];
   const availableTechniciansRaw = Array.isArray(data?.available) ? data.available : [];
@@ -43,8 +44,8 @@ const Technicians = () => {
     filterTab === "available"
       ? availableTechnicians
       : filterTab === "on-job"
-      ? onJobTechnicians
-      : allTechnicians;
+        ? onJobTechnicians
+        : allTechnicians;
 
   useEffect(() => {
     if (location.state?.selectedTechnicianName && allTechnicians.length) {
@@ -66,44 +67,7 @@ const Technicians = () => {
     return name.includes(search) || specialties.includes(search);
   });
 
-  if (selectedJob) {
-    return (
-      <JobDetails 
-        job={selectedJob}
-        onBack={() => setSelectedJob(null)}
-        onUpdateProgress={() => {}}
-        onStatusChange={() => {}}
-        onAssignTech={() => {}}
-        technicians={allTechnicians}
-      />
-    );
-  }
 
-  if (selectedTechnician) {
-    return (
-      <TechnicianDetails
-        tech={selectedTechnician}
-        onBack={() => setSelectedTechnician(null)}
-        onSelectJob={setSelectedJob}
-      />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 overflow-y-auto bg-white p-12 text-gray-500">
-        Loading technicians...
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex-1 overflow-y-auto bg-white p-12 text-red-500">
-        Failed to load technicians.
-      </div>
-    );
-  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-white">

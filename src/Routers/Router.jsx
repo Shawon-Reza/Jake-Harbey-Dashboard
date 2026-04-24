@@ -14,6 +14,7 @@ import Notifications from "../components/Notifications/Notifications";
 import UserManage from "../components/UserManage/UserManage";
 import CustomerProfileView from "../components/Customers/CustomerProfileView";
 import JobDetails from "../components/Shared/JobDetails";
+import TechnicianDetails from "../components/Technicians/TechnicianDetails";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "/technicians",
         element: <Technicians />,
+      },
+      {
+        path: "/technicians/:id",
+        element: <TechnicianDetails />,
       },
       {
         path: "/clients/:id",

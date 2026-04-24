@@ -1,17 +1,44 @@
-import React, { useState, useRef } from 'react';
-import { Eye, EyeOff, Edit2, CheckCircle2 } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useCurrentUserQuery, usePasswordResetMutation, useProfileUpdateMutation } from '../../Api/authApi';
+import SettingsTabs from './SettingsTabs';
+import AccountSettingsTab from './AccountSettingsTab';
+import SecuritySettingsTab from './SecuritySettingsTab';
+
+const toDisplay = (value) => {
+  if (value === null || value === undefined || value === '') return 'N/A';
+  return value;
+};
+
+const getFullName = (user) => {
+  if (user?.full_name) return user.full_name;
+  const first = user?.first_name || user?.firstName || '';
+  const last = user?.last_name || user?.lastName || '';
+  const combined = `${first} ${last}`.trim();
+  return combined || 'N/A';
+};
+
+const getPhone = (user) => {
+  return user?.phone_number || user?.phone || user?.mobile_number || '';
+};
+
+const fallbackProfile = 'https://ui-avatars.com/api/?name=NA&background=E5E7EB&color=6B7280';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('account');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { data: currentUser, isLoading: isUserLoading } = useCurrentUserQuery();
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } = useProfileUpdateMutation();
+  const { mutateAsync: resetPassword, isPending: isResettingPassword } = usePasswordResetMutation();
+  const [selectedProfileFile, setSelectedProfileFile] = useState(null);
 
   const [accountData, setAccountData] = useState({
-    firstName: 'Cameron',
-    lastName: 'Williamson',
-    email: 'Cameron@gmail.com',
-    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'
+    fullName: '',
+    email: '',
+    phone: '',
+    profileImage: ''
   });
 
   const [securityData, setSecurityData] = useState({
@@ -28,10 +55,26 @@ export default function Settings() {
 
   const fileInputRef = useRef(null);
 
+  const initialAccountData = useMemo(() => {
+    return {
+      fullName: getFullName(currentUser),
+      email: currentUser?.email || '',
+      phone: getPhone(currentUser),
+      profileImage: currentUser?.profile_picture || currentUser?.profileImage || fallbackProfile,
+    };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    setAccountData(initialAccountData);
+    setSelectedProfileFile(null);
+  }, [currentUser, initialAccountData]);
+
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
+      setSelectedProfileFile(file);
       setAccountData(prev => ({ ...prev, profileImage: imageUrl }));
     }
   };
@@ -44,191 +87,126 @@ export default function Settings() {
     setSecurityData(prev => ({ ...prev, [field]: value }));
   };
 
-  return (
-    <div className="min-h-screen bg-[#F8FAFB] p-12">
-      <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">Settings</h1>
+  const handleAccountCancel = () => {
+    setAccountData(initialAccountData);
+    setSelectedProfileFile(null);
+  };
+  const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")).access : null;
+  console.log("token:", token)
 
-      {/* Tabs Switcher */}
-      <div className="max-w-7xl bg-white rounded-xl p-2 mb-12 flex border border-[#E0E0E0] shadow-sm">
-        <button
-          onClick={() => setActiveTab('account')}
-          className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'account'
-              ? 'bg-[#BBE2E2] text-[#1A9C9C]'
-              : 'text-[#999999] hover:text-[#454545]'
-            }`}
-        >
-          Account
-        </button>
-        <button
-          onClick={() => setActiveTab('security')}
-          className={`flex-1 py-2 rounded-lg font-semibold transition-all ${activeTab === 'security'
-              ? 'bg-[#BBE2E2] text-[#1A9C9C]'
-              : 'text-[#999999] hover:text-[#454545]'
-            }`}
-        >
-          Security
-        </button>
-      </div>
+  const handleProfileUpdate = async () => {
+    console.log('User given profile data:', {
+      fullName: accountData.fullName,
+      phone: accountData.phone,
+      profileImage: selectedProfileFile
+        ? {
+          name: selectedProfileFile.name,
+          size: selectedProfileFile.size,
+          type: selectedProfileFile.type,
+        }
+        : null,
+    });
+
+    await updateProfile({
+      full_name: accountData.fullName,
+      phone: accountData.phone,
+      profile_picture: selectedProfileFile,
+    });
+    setSelectedProfileFile(null);
+  };
+
+  const handleSecurityCancel = () => {
+    setSecurityData({
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+  };
+
+  const handlePasswordReset = async () => {
+    const email = currentUser?.email || accountData.email;
+
+    console.log('User given password data:', {
+      email,
+      token: token,
+      newPassword: securityData.newPassword,
+      confirmPassword: securityData.confirmPassword,
+    });
+
+    if (!email) {
+      toast.error('Email not found for password reset.');
+      return;
+    }
+
+    if (securityData.newPassword !== securityData.confirmPassword) {
+      toast.error('New password and confirm password do not match.');
+      return;
+    }
+
+    if (!securityData.oldPassword || !securityData.newPassword) {
+      toast.error('Please fill all password fields.');
+      return;
+    }
+
+    try {
+      await resetPassword({
+        email,
+        // token: securityData.oldPassword,
+        token: token,
+        new_password: securityData.newPassword,
+      });
+
+      toast.success('Password updated successfully.');
+      handleSecurityCancel();
+    } catch (error) {
+      console.log('Password reset error:', error?.response?.data || error);
+      toast.error(
+        error?.response?.data?.message ||
+        error?.response?.data?.detail ||
+        'Failed to update password.'
+      );
+    }
+  };
+
+  return (
+    <div className="mx-auto w-full p-4 md:p-5">
+      <h1 className="text-2xl font-medium text-[#2A2A2A] mb-5">Settings</h1>
+
+      <SettingsTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {/* Main Content Container */}
-      <div className="max-w-7xl bg-white rounded-2xl p-8 border border-[#E0E0E0] shadow-sm">
-
-        {/* Account Tab Content */}
+      <div className="max-w-7xl bg-white rounded-xl p-5 md:p-6 border border-[#E0E0E0] shadow-sm">
         {activeTab === 'account' && (
-          <div className="animate-in fade-in duration-300">
-            <h2 className="text-2xl font-medium text-[#2A2A2A] mb-10">Profile Information</h2>
-
-            <div className="flex items-center gap-6 mb-12">
-              <div className="relative group">
-                <img
-                  src={accountData.profileImage}
-                  alt="Profile"
-                  className="w-28 h-28 rounded-2xl object-cover shadow-md border-4 border-white"
-                />
-              </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-3 px-6 py-3 border-2 border-[#E0E0E0] rounded-2xl text-lg text-[#454545] hover:bg-gray-50 transition-all group"
-              >
-                Change Pictures
-                <Edit2 className="w-6 h-6 text-[#999999] group-hover:text-[#1A9C9C]" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">First Name</label>
-                <input
-                  type="text"
-                  value={accountData.firstName}
-                  onChange={(e) => handleAccountChange('firstName', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                />
-              </div>
-              <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">Last Name</label>
-                <input
-                  type="text"
-                  value={accountData.lastName}
-                  onChange={(e) => handleAccountChange('lastName', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                />
-              </div>
-              <div className="space-y-3">
-                <label className="block text-lg text-[#2A2A2A]">Email</label>
-                <input
-                  type="email"
-                  value={accountData.email}
-                  onChange={(e) => handleAccountChange('email', e.target.value)}
-                  className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl font-medium text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-8">
-              <button className="px-10 py-4 bg-[#1A9C9C] text-white text-xl rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
-                Update
-              </button>
-              <button className="text-xl text-[#1A9C9C] hover:opacity-80 transition-opacity">
-                Cancel
-              </button>
-            </div>
-          </div>
+          <AccountSettingsTab
+            accountData={accountData}
+            isUserLoading={isUserLoading}
+            fallbackProfile={fallbackProfile}
+            fileInputRef={fileInputRef}
+            onImageChange={handleImageChange}
+            onAccountChange={handleAccountChange}
+            onCancel={handleAccountCancel}
+            onUpdate={handleProfileUpdate}
+            isUpdating={isUpdatingProfile}
+            toDisplay={toDisplay}
+          />
         )}
 
-        {/* Security Tab Content */}
         {activeTab === 'security' && (
-          <div className="animate-in fade-in duration-300">
-            <h2 className="text-2xl text-[#2A2A2A] mb-10">Password</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-              <div className="space-y-3">
-                <label className="block text-[#2A2A2A]">Old Password</label>
-                <div className="relative">
-                  <input
-                    type={showOldPassword ? 'text' : 'password'}
-                    value={securityData.oldPassword}
-                    onChange={(e) => handleSecurityChange('oldPassword', e.target.value)}
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                  />
-                  <button
-                    onClick={() => setShowOldPassword(!showOldPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
-                  >
-                    {showOldPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-[#2A2A2A]">New Password</label>
-                <div className="relative">
-                  <input
-                    type={showNewPassword ? 'text' : 'password'}
-                    value={securityData.newPassword}
-                    onChange={(e) => handleSecurityChange('newPassword', e.target.value)}
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                  />
-                  <button
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
-                  >
-                    {showNewPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-[#2A2A2A]">Confirm Password</label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={securityData.confirmPassword}
-                    onChange={(e) => handleSecurityChange('confirmPassword', e.target.value)}
-                    className="w-full px-6 py-4 bg-white border-2 border-[#F0F0F0] rounded-2xl text-[#454545] focus:border-[#1A9C9C] focus:outline-none transition-all shadow-sm"
-                  />
-                  <button
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#1A9C9C] transition-colors"
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-7 h-7" /> : <Eye className="w-7 h-7" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Password Requirements */}
-            <div className="space-y-2 mb-12">
-              {passwordRequirements.map((req, idx) => (
-                <div key={idx} className="flex items-center gap-2 group">
-                  <div className={`p-1 rounded-full transition-all ${req.met ? 'bg-[#1A9C9C]/10' : 'bg-gray-100'}`}>
-                    <CheckCircle2 className={`w-6 h-6 ${req.met ? 'text-[#1A9C9C]' : 'text-gray-300'}`} />
-                  </div>
-                  <span className={`text-lg transition-colors ${req.met ? 'text-[#454545]' : 'text-gray-400 font-medium'}`}>
-                    {req.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-8">
-              <button className="px-10 py-4 bg-[#1A9C9C] text-white rounded-2xl hover:bg-[#158080] transition-all shadow-lg shadow-[#1A9C9C]/20">
-                Update Password
-              </button>
-              <button className="text-[#1A9C9C] hover:opacity-80 transition-opacity">
-                Cancel
-              </button>
-            </div>
-          </div>
+          <SecuritySettingsTab
+            showOldPassword={showOldPassword}
+            showNewPassword={showNewPassword}
+            showConfirmPassword={showConfirmPassword}
+            securityData={securityData}
+            passwordRequirements={passwordRequirements}
+            onSecurityChange={handleSecurityChange}
+            onToggleOldPassword={() => setShowOldPassword(!showOldPassword)}
+            onToggleNewPassword={() => setShowNewPassword(!showNewPassword)}
+            onToggleConfirmPassword={() => setShowConfirmPassword(!showConfirmPassword)}
+            onUpdatePassword={handlePasswordReset}
+            onCancel={handleSecurityCancel}
+            isUpdatingPassword={isResettingPassword}
+          />
         )}
-
       </div>
     </div>
   );

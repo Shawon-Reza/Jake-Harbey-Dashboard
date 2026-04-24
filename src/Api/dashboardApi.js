@@ -7,6 +7,7 @@ export const DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY = ["dashboard", "customers", "
 export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
 export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
 export const DASHBOARD_TECHNICIANS_QUERY_KEY = ["dashboard", "technicians", "all"];
+export const DASHBOARD_TECHNICIAN_DETAILS_QUERY_KEY = ["dashboard", "technicians", "details"];
 
 const hasAccessToken = () => {
   try {
@@ -134,6 +135,20 @@ export const useDashboardTechniciansQuery = () => {
       return response.data;
     },
     enabled: hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardTechnicianDetailsQuery = (userId) => {
+  return useQuery({
+    queryKey: [...DASHBOARD_TECHNICIAN_DETAILS_QUERY_KEY, userId],
+    queryFn: async () => {
+      const response = await axiosApi.get(`/dashboard/technicians/${userId}/details/`);
+      console.log("Technician details data:", response.data);
+      return response.data;
+    },
+    enabled: Boolean(userId) && hasAccessToken(),
     staleTime: 1000 * 60 * 2,
     retry: 1,
   });

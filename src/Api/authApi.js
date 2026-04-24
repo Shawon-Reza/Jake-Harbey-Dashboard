@@ -50,3 +50,46 @@ export const useLoginMutation = () => {
     },
   });
 };
+
+export const useProfileUpdateMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["auth", "profile-update"],
+    mutationFn: async ({ full_name, phone, profile_picture }) => {
+      const formData = new FormData();
+      formData.append("full_name", full_name || "");
+      formData.append("phone", phone || "");
+
+      if (profile_picture instanceof File) {
+        formData.append("profile_picture", profile_picture);
+      }
+
+      const response = await axiosApi.patch("/auth/profile-update/", formData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
+    },
+  });
+};
+
+export const usePasswordResetMutation = () => {
+  return useMutation({
+    mutationKey: ["auth", "password-reset"],
+    mutationFn: async ({ email, token, new_password }) => {
+      console.log("Password reset request payload:", {
+        email,
+        token,
+        new_password,
+      });
+      const response = await axiosApi.post("/auth/password-reset/", {
+        email,
+        token,
+        new_password,
+      });
+      console.log("Password reset response:", response.data);
+      return response.data;
+    },
+  });
+};
