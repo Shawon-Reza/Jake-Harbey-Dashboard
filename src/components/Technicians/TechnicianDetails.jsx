@@ -22,6 +22,24 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
 
   if (!tech) return null;
 
+  const name = tech.full_name || tech.name || "N/A";
+  const avatar =
+    tech.profile_picture ||
+    tech.avatar ||
+    "https://ui-avatars.com/api/?name=NA&background=E5E7EB&color=6B7280";
+  const status = tech.status || "available";
+  const specialtiesValue = tech.specialities ?? tech.specialties;
+  const specialties = Array.isArray(specialtiesValue)
+    ? specialtiesValue
+    : String(specialtiesValue || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+  const documents = tech.documents || { Contracts: [], "Technician Info": [] };
+  const assignedJobs = Array.isArray(tech.assignedJobs) ? tech.assignedJobs : [];
+  const activeJobs = tech.active_jobs ?? tech.activeJobs ?? "N/A";
+  const completedJobs = tech.completed_jobs ?? tech.completedJobs ?? "N/A";
+
   return (
     <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
       <div className="bg-[#F2F2F2] mx-auto p-12">
@@ -45,18 +63,26 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
           <div className="relative z-10 flex items-center gap-10">
             <div className="relative">
               <img
-                src={tech.avatar}
-                alt={tech.name}
+                src={avatar}
+                alt={name}
                 className="w-24 h-24 rounded-full border-4 border-white shadow-xl"
+                onError={(event) => {
+                  event.currentTarget.src =
+                    "https://ui-avatars.com/api/?name=NA&background=E5E7EB&color=6B7280";
+                }}
               />
-              <div className="absolute bottom-1 right-1 w-6 h-6 bg-[#28A745] border-4 border-[#004D40] rounded-full shadow-sm"></div>
+              <div
+                className={`absolute bottom-1 right-1 w-6 h-6 border-4 border-[#004D40] rounded-full shadow-sm ${
+                  status === "on-job" ? "bg-orange-400" : "bg-[#28A745]"
+                }`}
+              ></div>
             </div>
             <div className="text-white">
               <h2 className="text-3xl font-medium mb-3 tracking-tight">
-                {tech.name}
+                {name}
               </h2>
               <span className="inline-flex items-center bg-[#E5F5ED] text-[#28A745] px-4 py-1.5 rounded-full text-xs font-bold shadow-sm">
-                Available
+                {status === "on-job" ? "On Job" : "Available"}
               </span>
             </div>
           </div>
@@ -72,11 +98,11 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
               </h3>
               <div className="">
                 {[
-                  { label: "Name", value: tech.name.toLowerCase() },
-                  { label: "Number", value: tech.phone },
-                  { label: "Company", value: tech.company },
-                  { label: "Location", value: tech.location },
-                  { label: "License", value: tech.licenseNumber },
+                  { label: "Name", value: name },
+                  { label: "Number", value: tech.phone || "N/A" },
+                  { label: "Company", value: tech.company || "N/A" },
+                  { label: "Location", value: tech.location || "N/A" },
+                  { label: "License", value: tech.licenseNumber || "N/A" },
                 ].map((info) => (
                   <div key={info.label} className="flex pb-4 text-sm">
                     <span className="w-20 text-[#6B7280]">{info.label}</span>
@@ -94,7 +120,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                 Specialties
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {tech.specialties.map((specialty, idx) => (
+                {(specialties.length ? specialties : ["N/A"]).map((specialty, idx) => (
                   <span
                     key={idx}
                     className="bg-[#EFF6FF] text-[#06788F] px-4 py-3 rounded-xl text-xs font-medium border border-[#DBEAFE] text-center"
@@ -102,16 +128,6 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                     {specialty}
                   </span>
                 ))}
-                {/* Adding mock specialties to match design image */}
-                <span className="bg-[#EFF6FF] text-[#06788F] px-4 py-3 rounded-xl text-xs font-medium border border-[#DBEAFE] text-center">
-                  Window Tinting
-                </span>
-                <span className="bg-[#EFF6FF] text-[#06788F] px-4 py-3 rounded-xl text-xs font-medium border border-[#DBEAFE] text-center">
-                  Window Tinting
-                </span>
-                <span className="bg-[#EFF6FF] text-[#06788F] px-4 py-3 rounded-xl text-xs font-medium border border-[#DBEAFE] text-center">
-                  Window Tinting
-                </span>
               </div>
             </div>
             {/* Documents Section */}
@@ -128,7 +144,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                   "Contracts",
                   "Technician Info",
                 ].map((tabName, idx) => {
-                  const count = tech.documents && tech.documents[tabName] ? tech.documents[tabName].length : 0;
+                  const count = documents[tabName] ? documents[tabName].length : 0;
                   return (
                     <button
                       key={idx}
@@ -148,7 +164,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
               </div>
 
               <div className="space-y-4">
-                {(tech.documents && tech.documents[activeDocumentTab] ? tech.documents[activeDocumentTab] : []).map((doc) => (
+                {(documents[activeDocumentTab] ? documents[activeDocumentTab] : []).map((doc) => (
                   <div key={doc.id} className="flex items-center justify-between p-4 bg-white border border-[#E5E7EB] rounded-2xl group transition-shadow">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-white border border-[#E5E7EB] rounded-xl flex items-center justify-center">
@@ -176,7 +192,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                     </div>
                   </div>
                 ))}
-                {(!tech.documents || !tech.documents[activeDocumentTab] || tech.documents[activeDocumentTab].length === 0) && (
+                {(!documents[activeDocumentTab] || documents[activeDocumentTab].length === 0) && (
                     <div className="p-8 text-center text-[#6B7280] text-sm">
                         No documents found for this category.
                     </div>
@@ -196,7 +212,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                   <div className="flex items-center gap-3 text-[#2563EB] mb-4">
                     <Briefcase size={20} className="stroke-[2.5px]" />
                     <span className="text-3xl font-medium">
-                      {tech.activeJobs}
+                      {activeJobs}
                     </span>
                   </div>
                   <div className="text-xs text-[#6B7280]">Active Jobs</div>
@@ -205,7 +221,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                   <div className="flex items-center gap-3 text-[#16A34A] mb-4">
                     <CheckCircle2 size={20} className="stroke-[2.5px]" />
                     <span className="text-3xl font-medium">
-                      {tech.completedJobs}
+                      {completedJobs}
                     </span>
                   </div>
                   <div className="text-xs text-[#6B7280]">Completed</div>
@@ -234,10 +250,10 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
         {/* Assigned Jobs List */}
         <div className="bg-[#F9FAFB] rounded-xl p-10 border border-[#E7E7E7] shadow-sm mb-10">
           <h3 className="text-xl font-semibold text-[#454545] mb-8">
-            Assigned Jobs ( {tech.assignedJobs.length} )
+            Assigned Jobs ( {assignedJobs.length} )
           </h3>
           <div className="space-y-4">
-            {tech.assignedJobs.map((job) => (
+            {assignedJobs.map((job) => (
               <div
                 key={job.id}
                 onClick={() => onSelectJob(job)}
@@ -245,7 +261,7 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
               >
                 <div className="flex items-center gap-6">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
-                    {job.name.charAt(0)}
+                    {(job.name || "N").charAt(0)}
                   </div>
                   <div>
                     <p className="font-medium text-[#2A2A2A] text-lg group-hover:text-[#1A9C9C] transition-colors">
