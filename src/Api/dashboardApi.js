@@ -4,6 +4,8 @@ import axiosApi from "./axiosInstance";
 export const DASHBOARD_QUERY_KEY = ["dashboard", "overview"];
 export const DASHBOARD_CUSTOMERS_QUERY_KEY = ["dashboard", "customers", "all"];
 export const DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY = ["dashboard", "customers", "details"];
+export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
+export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
 
 const hasAccessToken = () => {
   try {
@@ -89,6 +91,34 @@ export const useDashboardCustomerDetailsQuery = (userId) => {
       return response.data;
     },
     enabled: Boolean(userId) && hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardJobsQuery = () => {
+  return useQuery({
+    queryKey: DASHBOARD_JOBS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosApi.get("/dashboard/jobs/all/");
+      console.log("Dashboard jobs data:", response.data);
+      return response.data;
+    },
+    enabled: hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardJobDetailsQuery = (jobId) => {
+  return useQuery({
+    queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, jobId],
+    queryFn: async () => {
+      const response = await axiosApi.get(`/dashboard/inbox/${jobId}/details/`);
+      console.log("Job details data:", response.data);
+      return response.data;
+    },
+    enabled: Boolean(jobId) && hasAccessToken(),
     staleTime: 1000 * 60 * 2,
     retry: 1,
   });
