@@ -8,7 +8,6 @@ import { useDashboardInboxQuery } from '../../Api/dashboardApi';
 const Inbox = () => {
     const [selectedJob, setSelectedJob] = useState(null);
     const { data, isLoading, isError } = useDashboardInboxQuery();
-    console.log(data)
 
     const [activeTab, setActiveTab] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
@@ -93,21 +92,21 @@ const Inbox = () => {
     ];
 
     return (
-        <div className="flex bg-gray-50">
+        <div className="flex bg-gray-50 min-h-[calc(100vh-64px)]">
             {!selectedJob && (
                 <div className="flex-1 overflow-y-auto bg-white">
-                    <div className="mx-auto p-4 md:p-6 lg:p-8">
-                        <div className="flex justify-between items-center mb-10">
-                            <h1 className="text-3xl font-medium text-[#2A2A2A]">Inbox</h1>
+                    <div className="mx-auto p-3 sm:p-4 md:px-6 lg:px-8">
+                        <div className="flex justify-between items-center mb-2">
+                            <h1 className="text-2xl md:text-3xl font-medium text-[#2A2A2A]">Inbox</h1>
 
                         </div>
 
                         {isLoading ? (
-                            <div className="p-8 text-gray-500">Loading inbox data...</div>
+                            <div className="p-6 md:p-8 text-gray-500">Loading inbox data...</div>
                         ) : null}
 
                         {isError ? (
-                            <div className="p-8 text-red-500">Failed to load inbox data.</div>
+                            <div className="p-6 md:p-8 text-red-500">Failed to load inbox data.</div>
                         ) : null}
 
                         {!isLoading && !isError ? (

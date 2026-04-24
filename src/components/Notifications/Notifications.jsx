@@ -135,10 +135,10 @@ export default function Notifications() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFB] p-8">
+        <div className="min-h-screen bg-[#F8FAFB] px-8 py-2">
             {/* Header */}
-            <div className="max-w-[1200px] mx-auto mb-8">
-                <div className="flex items-center justify-between mb-10">
+            <div className=" mx-auto mb-4">
+                <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-4">
                         <h1 className="text-3xl text-[#2A2A2A]">Notifications</h1>
                         <span className="bg-[#FF4D4D] text-white px-4 py-1 rounded-full">
@@ -188,7 +188,7 @@ export default function Notifications() {
             </div>
 
             {/* Notifications List Container */}
-            <div className="max-w-[1200px] mx-auto bg-white rounded-2xl border border-[#E0E0E0] overflow-hidden shadow-sm">
+            <div className="max-w-7xl mx-auto bg-white rounded-2xl border border-[#E0E0E0] overflow-hidden shadow-sm">
                 <div className="divide-y divide-[#F0F0F0]">
                     {filteredNotifications.map((notification) => (
                         <div

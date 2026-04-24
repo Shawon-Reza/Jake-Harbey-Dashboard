@@ -154,7 +154,7 @@ export default function UserManage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-[#f8fafc] p-4 md:p-6 lg:p-8">
-      <div className="mx-auto max-w-7xl space-y-8">
+      <div className="mx-auto  space-y-5">
         {/* Header Section */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h1 className="text-3xl font-medium text-slate-800">User Management</h1>

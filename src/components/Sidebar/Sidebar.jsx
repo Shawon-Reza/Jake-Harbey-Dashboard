@@ -11,11 +11,17 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.svg";
+import { toast } from "sonner";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
   const handleLogout = () => {
-    dispatch(logout());
+    try {
+      localStorage.removeItem("auth");
+      toast.success("Logout successful!");
+    } catch (error) {
+      toast.error("Error occurred while logging out.");
+    }
   };
   return (
     <div className=" bg-primary text-[#FFFCFC] h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-72">
