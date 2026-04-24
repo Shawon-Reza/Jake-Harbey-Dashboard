@@ -6,6 +6,7 @@ export const DASHBOARD_CUSTOMERS_QUERY_KEY = ["dashboard", "customers", "all"];
 export const DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY = ["dashboard", "customers", "details"];
 export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
 export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
+export const DASHBOARD_INBOX_QUERY_KEY = ["dashboard", "inbox", "all"];
 export const DASHBOARD_TECHNICIANS_QUERY_KEY = ["dashboard", "technicians", "all"];
 export const DASHBOARD_TECHNICIAN_DETAILS_QUERY_KEY = ["dashboard", "technicians", "details"];
 
@@ -121,6 +122,20 @@ export const useDashboardJobDetailsQuery = (jobId) => {
       return response.data;
     },
     enabled: Boolean(jobId) && hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardInboxQuery = () => {
+  return useQuery({
+    queryKey: DASHBOARD_INBOX_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosApi.get("/dashboard/inbox/");
+      console.log("Dashboard inbox data:", response.data);
+      return response.data;
+    },
+    enabled: hasAccessToken(),
     staleTime: 1000 * 60 * 2,
     retry: 1,
   });

@@ -91,8 +91,6 @@ export default function Settings() {
     setAccountData(initialAccountData);
     setSelectedProfileFile(null);
   };
-  const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")).access : null;
-  console.log("token:", token)
 
   const handleProfileUpdate = async () => {
     console.log('User given profile data:', {
@@ -124,19 +122,11 @@ export default function Settings() {
   };
 
   const handlePasswordReset = async () => {
-    const email = currentUser?.email || accountData.email;
-
     console.log('User given password data:', {
-      email,
-      token: token,
+      oldPassword: securityData.oldPassword,
       newPassword: securityData.newPassword,
       confirmPassword: securityData.confirmPassword,
     });
-
-    if (!email) {
-      toast.error('Email not found for password reset.');
-      return;
-    }
 
     if (securityData.newPassword !== securityData.confirmPassword) {
       toast.error('New password and confirm password do not match.');
@@ -150,9 +140,7 @@ export default function Settings() {
 
     try {
       await resetPassword({
-        email,
-        // token: securityData.oldPassword,
-        token: token,
+        old_password: securityData.oldPassword,
         new_password: securityData.newPassword,
       });
 

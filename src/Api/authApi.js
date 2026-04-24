@@ -77,15 +77,13 @@ export const useProfileUpdateMutation = () => {
 export const usePasswordResetMutation = () => {
   return useMutation({
     mutationKey: ["auth", "password-reset"],
-    mutationFn: async ({ email, token, new_password }) => {
+    mutationFn: async ({ old_password, new_password }) => {
       console.log("Password reset request payload:", {
-        email,
-        token,
+        old_password,
         new_password,
       });
-      const response = await axiosApi.post("/auth/password-reset/", {
-        email,
-        token,
+      const response = await axiosApi.post("/auth/password-change/", {
+        old_password,
         new_password,
       });
       console.log("Password reset response:", response.data);
