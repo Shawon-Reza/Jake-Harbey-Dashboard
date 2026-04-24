@@ -12,12 +12,13 @@ import Technicians from "../components/Technicians/Technicians";
 import Customers from "../components/Customers/Customers";
 import Notifications from "../components/Notifications/Notifications";
 import UserManage from "../components/UserManage/UserManage";
+import CustomerProfileView from "../components/Customers/CustomerProfileView";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Dashboard />,
-    errorElement: <h1>404</h1>,
+    // errorElement: <h1>404</h1>,
     children: [
       {
         path: "/",
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: "/customers",
         element: <Customers />,
+      },
+      {
+        path: "/customers/:id",
+        element: <CustomerProfileView />,
       },
       {
         path: "/subscription",

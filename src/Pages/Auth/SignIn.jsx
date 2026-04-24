@@ -2,51 +2,39 @@ import { useState } from "react";
 import loginImg from "../../assets/images/login.png";
 import logo from "../../assets/images/logo.svg";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-
-import toast from "react-hot-toast";
-import Button from "../../components/Shared/Button";
+import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
+import { useLoginMutation } from "../../Api/authApi";
 import { CgSpinner } from "react-icons/cg";
-import { FaApple } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 
 const SignIn = () => {
-  // const { isLoading } = useLoginMutation();
-  // const credentials = useSelector((state) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const [login] = useLoginMutation();
-  const handleLogin = async (e) => {
-    setIsLoading(true);
-    e.preventDefault();
-    const data = {
-      email: email,
-      password: password,
-    };
-    // try {
-    //   const res = await login(data).unwrap();
+   
+  const loginMutation = useLoginMutation();
 
-    //   const { access, refresh } = res;
-    //   // Dispatch userLoggedIn to update Redux state
-    //   dispatch(
-    //     setCredentials({
-    //       access: access,
-    //       refresh: refresh,
-    //     })
-    //   );
-    // } catch (error) {
-    //   console.error("Login failed:", error);
-    //   return;
-    // }
-    toast.success("Login successful!");
-    setEmail("");
-    setPassword("");
-    console.log("go to home");
-    navigate("/");
+  const handleLogin = async (e) => {
+
+    e.preventDefault();
+    try {
+      await loginMutation.mutateAsync({
+        email,
+        password,
+      });
+
+      toast.success("Login successful!");
+      setEmail("");
+      setPassword("");
+      navigate("/");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.detail ||
+          "Login failed"
+      );
+    }
   };
 
   return (
@@ -124,9 +112,17 @@ const SignIn = () => {
             {/* Login Button */}
             <button
               type="submit"
+              disabled={loginMutation.isPending}
               className="w-full bg-primary text-white font-semibold py-3 rounded-md transition-colors duration-200"
             >
-              Login
+              {loginMutation.isPending ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                  Logging in
+                </span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
 
