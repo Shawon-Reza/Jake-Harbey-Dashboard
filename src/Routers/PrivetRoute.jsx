@@ -1,20 +1,36 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useCurrentUserQuery } from "../Api/authApi";
+
+const getStoredAuth = () => {
+  try {
+    return JSON.parse(localStorage.getItem("auth")) || {};
+  } catch {
+    return {};
+  }
+};
 
 export function PrivateRoute({ children }) {
-  // Retrieve auth data from localStorage
-  const Data = useSelector((state) => state.auth);
+  const location = useLocation();
+  const { data: currentUser, isLoading, isError } = useCurrentUserQuery();
+  const hasAccessToken = Boolean(getStoredAuth()?.access);
 
-  // Check if user is not authenticated
-  if (!Data.access && !Data.refresh) {
-    return <Navigate to="/login"  />;
+  if (!hasAccessToken) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check if user is not verified
-  if (!Data.isAuthenticated) {
-    return <Navigate to="/" />;
+  if (isLoading) {
+    return <div className="p-6 text-gray-500">Checking access...</div>;
   }
 
-  // User meets all requirements
+  if (isError) {
+    localStorage.removeItem("auth");
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!currentUser || currentUser?.role !== "admin") {
+    localStorage.removeItem("auth");
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
   return children;
 }

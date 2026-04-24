@@ -19,7 +19,7 @@ import TechnicianDetails from "../components/Technicians/TechnicianDetails";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />,
+    element: <PrivateRoute><Dashboard /></PrivateRoute>,
     // errorElement: <h1>404</h1>,
     children: [
       {

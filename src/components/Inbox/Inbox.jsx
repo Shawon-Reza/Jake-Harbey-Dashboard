@@ -8,6 +8,7 @@ import { useDashboardInboxQuery } from '../../Api/dashboardApi';
 const Inbox = () => {
     const [selectedJob, setSelectedJob] = useState(null);
     const { data, isLoading, isError } = useDashboardInboxQuery();
+    console.log(data)
 
     const [activeTab, setActiveTab] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
@@ -135,7 +136,7 @@ const Inbox = () => {
             )}
 
             {selectedJob && (
-                <JobDetails 
+                <JobDetails
                     job={selectedJob}
                     onBack={() => setSelectedJob(null)}
                     onUpdateProgress={updateJobProgress}
