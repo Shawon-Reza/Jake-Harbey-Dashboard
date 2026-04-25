@@ -156,6 +156,25 @@ export const useDashboardPlansQuery = () => {
   });
 };
 
+export const useCreateDashboardPlanMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ name, plan_type, tagline, price }) => {
+      const response = await axiosApi.post("/dashboard/plans/", {
+        name,
+        plan_type,
+        tagline,
+        price,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_PLANS_QUERY_KEY });
+    },
+  });
+};
+
 export const useUpdateDashboardPlanFeatureMutation = () => {
   const queryClient = useQueryClient();
 

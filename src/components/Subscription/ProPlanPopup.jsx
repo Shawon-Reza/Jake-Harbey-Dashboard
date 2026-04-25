@@ -16,10 +16,11 @@ export const ProPlanPopup = ({
 }) => {
   const isFeatureEditMode = mode === "feature-edit";
   const [planName, setPlanName] = useState("");
+  const [planType, setPlanType] = useState("guest");
+  const [tagline, setTagline] = useState("");
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
   const [features, setFeatures] = useState([]);
-  const [newFeature, setNewFeature] = useState("");
   const [missingFeatures, setMissingFeatures] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState(null);
@@ -27,6 +28,7 @@ export const ProPlanPopup = ({
   const [newMissingFeatureLabel, setNewMissingFeatureLabel] = useState("");
   const [isAddingFeature, setIsAddingFeature] = useState(false);
   const [isAddingMissingFeature, setIsAddingMissingFeature] = useState(false);
+  const saveButtonLabel = editData ? "Save Changes" : "Add Plan";
 
   useEffect(() => {
     if (isOpen) {
@@ -34,6 +36,8 @@ export const ProPlanPopup = ({
         setPlanName(editData.name || "");
         setPrice(editData.price !== undefined && editData.price !== null ? String(editData.price) : "");
         setDuration(editData.duration || "");
+        setPlanType(editData.plan_type || "guest");
+        setTagline(editData.tagline || "");
         setFeatures(
           Array.isArray(editData.featureItems)
             ? editData.featureItems.map((item) => ({
@@ -52,6 +56,8 @@ export const ProPlanPopup = ({
         );
       } else if (editData) {
         setPlanName(editData.name || "");
+        setPlanType(editData.plan_type || "guest");
+        setTagline(editData.tagline || "");
         setPrice(
           editData.price !== undefined && editData.price !== null
             ? String(editData.price)
@@ -62,29 +68,19 @@ export const ProPlanPopup = ({
         setMissingFeatures([]);
       } else {
         setPlanName("");
+        setPlanType("guest");
+        setTagline("");
         setPrice("");
         setDuration("");
         setFeatures([]);
         setMissingFeatures([]);
       }
-      setNewFeature("");
       setNewFeatureLabel("");
       setNewMissingFeatureLabel("");
     }
   }, [editData, isFeatureEditMode, isOpen]);
 
   if (!isOpen) return null;
-
-  const addFeature = () => {
-    if (newFeature.trim() && !features.includes(newFeature.trim())) {
-      setFeatures([...features, newFeature.trim()]);
-      setNewFeature("");
-    }
-  };
-
-  const removeFeature = (index) => {
-    setFeatures(features.filter((_, i) => i !== index));
-  };
 
   const deleteFeatureItem = async (feature, index) => {
     if (feature?.id) {
@@ -172,6 +168,8 @@ export const ProPlanPopup = ({
             }
             : {
               planName,
+                planType,
+                tagline,
               price,
               duration,
               features,
@@ -240,7 +238,22 @@ export const ProPlanPopup = ({
           )}
 
           {!isFeatureEditMode ? (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm text-gray-600">
+                  Plan Type
+                </label>
+                <select
+                  value={planType}
+                  onChange={(e) => setPlanType(e.target.value)}
+                  className="w-full rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="guest">Guest</option>
+                  <option value="free">Free</option>
+                  <option value="basic">Basic</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
               <div>
                 <label className="mb-1 block text-sm text-gray-600">
                   Price ($)
@@ -252,17 +265,20 @@ export const ProPlanPopup = ({
                   className="w-full rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-sm text-gray-600">
-                  Duration
-                </label>
-                <input
-                  type="text"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  className="w-full rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+            </div>
+          ) : null}
+
+          {!isFeatureEditMode ? (
+            <div>
+              <label className="mb-1 block text-sm text-gray-600">
+                Tagline
+              </label>
+              <input
+                type="text"
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                className="w-full rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           ) : null}
 
@@ -332,37 +348,8 @@ export const ProPlanPopup = ({
 
               </div>
             ) : (
-              <div className="space-y-2">
-                {features.map((feature, index) => (
-                  <div
-                    key={index}
-                  >
-                    <span className="text-sm text-gray-700">{feature}</span>
-                    <button
-                      onClick={() => removeFeature(index)}
-                      className="text-gray-400 hover:text-red-500"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={newFeature}
-                    onChange={(e) => setNewFeature(e.target.value)}
-                    placeholder="Add new features"
-                    className="flex-1 rounded-md border border-gray p-2 text-sm text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onKeyDown={(e) => e.key === "Enter" && addFeature()}
-                  />
-                  <button
-                    onClick={addFeature}
-                    className="rounded-md border border-gray p-2.5 text-gray-400 hover:text-blue-500"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
+              <div className="rounded-md border border-dashed border-slate-200 p-4 text-sm text-slate-400">
+                Features can be added after the plan is created.
               </div>
             )}
           </div>
@@ -434,7 +421,7 @@ export const ProPlanPopup = ({
               <Button className="w-full">
                 <div className="flex items-center justify-center gap-2">
                   <Save className="h-4 w-4" />
-                  {editData ? "Save Changes" : "Add Plan"}
+                  {saveButtonLabel}
                 </div>
               </Button>
             </div>

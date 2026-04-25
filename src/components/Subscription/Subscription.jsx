@@ -5,6 +5,7 @@ import { ProPlanPopup } from "./ProPlanPopup";
 import SubscriptionPlanCard from "./SubscriptionPlanCard";
 import {
   useDashboardPlansQuery,
+  useCreateDashboardPlanMutation,
   useCreateDashboardPlanFeatureMutation,
   useCreateDashboardPlanMissingFeatureMutation,
   useDeleteDashboardPlanFeatureMutation,
@@ -19,9 +20,8 @@ export default function Subscription() {
   const [editPlanData, setEditPlanData] = useState(null);
   const [planPopupMode, setPlanPopupMode] = useState("create");
   const [planToDelete, setPlanToDelete] = useState(null);
-  const [addedPlans, setAddedPlans] = useState([]);
-  const [updatedPlans, setUpdatedPlans] = useState({});
   const [deletedPlanIds, setDeletedPlanIds] = useState([]);
+  const createPlan = useCreateDashboardPlanMutation();
   const updatePlanFeature = useUpdateDashboardPlanFeatureMutation();
   const updatePlanMissingFeature = useUpdateDashboardPlanMissingFeatureMutation();
   const createPlanFeature = useCreateDashboardPlanFeatureMutation();
@@ -73,12 +73,8 @@ export default function Subscription() {
   );
 
   const plans = useMemo(() => {
-    const visibleBasePlans = basePlans
-      .filter((plan) => !deletedPlanIds.includes(plan.id))
-      .map((plan) => updatedPlans[plan.id] || plan);
-
-    return [...visibleBasePlans, ...addedPlans];
-  }, [addedPlans, basePlans, deletedPlanIds, updatedPlans]);
+    return basePlans.filter((plan) => !deletedPlanIds.includes(plan.id));
+  }, [basePlans, deletedPlanIds]);
 
   const handleAddPlan = () => {
     setEditPlanData(null);
@@ -105,23 +101,24 @@ export default function Subscription() {
   const confirmDeletePlan = () => {
     if (!planToDelete) return;
 
-    if (String(planToDelete.id).startsWith("local-")) {
-      setAddedPlans((currentPlans) =>
-        currentPlans.filter((plan) => plan.id !== planToDelete.id),
-      );
-    } else {
-      setDeletedPlanIds((currentIds) => [...new Set([...currentIds, planToDelete.id])]);
-      setUpdatedPlans((current) => {
-        const next = { ...current };
-        delete next[planToDelete.id];
-        return next;
-      });
-    }
+    setDeletedPlanIds((currentIds) => [...new Set([...currentIds, planToDelete.id])]);
 
     setPlanToDelete(null);
   };
 
-  const handleSaveProPlan = (planData) => {
+  const handleSaveProPlan = async (planData) => {
+    if (planPopupMode === "create") {
+      await createPlan.mutateAsync({
+        name: planData.planName?.trim(),
+        plan_type: planData.planType,
+        tagline: planData.tagline?.trim(),
+        price: planData.price?.trim(),
+      });
+      setShowProPlanPopup(false);
+      setEditPlanData(null);
+      return;
+    }
+
     if (planPopupMode === "feature-edit") {
       const selectedPlan = editPlanData;
       if (!selectedPlan) return;
@@ -161,41 +158,6 @@ export default function Subscription() {
         setEditPlanData(null);
       });
     }
-
-    const normalizedName = planData.planName?.trim() || "Custom Plan";
-    const normalizedPlan = {
-      ...(editPlanData || {}),
-      id: editPlanData?.id || `local-${Date.now()}`,
-      name: normalizedName,
-      tagline: editPlanData?.tagline || "N/A",
-      price: planData.price?.trim() || "Free",
-      duration: planData.duration?.trim() || "N/A",
-      icon: editPlanData?.icon || Star,
-      popular: editPlanData?.popular || false,
-      featured: editPlanData?.featured || false,
-      features: planData.features?.length ? planData.features : [],
-      missingFeatures: editPlanData?.missingFeatures || [],
-      plan_type: editPlanData?.plan_type || "custom",
-    };
-
-    if (editPlanData) {
-      if (String(editPlanData.id).startsWith("local-")) {
-        setAddedPlans((currentPlans) =>
-          currentPlans.map((plan) =>
-            plan.id === editPlanData.id ? normalizedPlan : plan,
-          ),
-        );
-      } else {
-        setUpdatedPlans((current) => ({
-          ...current,
-          [editPlanData.id]: normalizedPlan,
-        }));
-      }
-
-      return;
-    }
-
-    setAddedPlans((currentPlans) => [...currentPlans, normalizedPlan]);
   };
 
   const handleDeletePlanFeature = async (item) => {
