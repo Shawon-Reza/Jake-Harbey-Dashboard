@@ -175,6 +175,20 @@ export const useCreateDashboardPlanMutation = () => {
   });
 };
 
+export const useDeleteDashboardPlanMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id) => {
+      const response = await axiosApi.delete(`/dashboard/plans/${id}/`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_PLANS_QUERY_KEY });
+    },
+  });
+};
+
 export const useUpdateDashboardPlanFeatureMutation = () => {
   const queryClient = useQueryClient();
 

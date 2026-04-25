@@ -8,6 +8,7 @@ import {
   useCreateDashboardPlanMutation,
   useCreateDashboardPlanFeatureMutation,
   useCreateDashboardPlanMissingFeatureMutation,
+  useDeleteDashboardPlanMutation,
   useDeleteDashboardPlanFeatureMutation,
   useDeleteDashboardPlanMissingFeatureMutation,
   useUpdateDashboardPlanFeatureMutation,
@@ -20,8 +21,8 @@ export default function Subscription() {
   const [editPlanData, setEditPlanData] = useState(null);
   const [planPopupMode, setPlanPopupMode] = useState("create");
   const [planToDelete, setPlanToDelete] = useState(null);
-  const [deletedPlanIds, setDeletedPlanIds] = useState([]);
   const createPlan = useCreateDashboardPlanMutation();
+  const deletePlan = useDeleteDashboardPlanMutation();
   const updatePlanFeature = useUpdateDashboardPlanFeatureMutation();
   const updatePlanMissingFeature = useUpdateDashboardPlanMissingFeatureMutation();
   const createPlanFeature = useCreateDashboardPlanFeatureMutation();
@@ -73,8 +74,8 @@ export default function Subscription() {
   );
 
   const plans = useMemo(() => {
-    return basePlans.filter((plan) => !deletedPlanIds.includes(plan.id));
-  }, [basePlans, deletedPlanIds]);
+    return basePlans;
+  }, [basePlans]);
 
   const handleAddPlan = () => {
     setEditPlanData(null);
@@ -101,9 +102,11 @@ export default function Subscription() {
   const confirmDeletePlan = () => {
     if (!planToDelete) return;
 
-    setDeletedPlanIds((currentIds) => [...new Set([...currentIds, planToDelete.id])]);
-
-    setPlanToDelete(null);
+    return deletePlan
+      .mutateAsync(planToDelete.id)
+      .then(() => {
+        setPlanToDelete(null);
+      });
   };
 
   const handleSaveProPlan = async (planData) => {
