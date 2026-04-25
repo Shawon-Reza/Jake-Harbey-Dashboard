@@ -194,7 +194,7 @@ export default function Subscription() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#f8fafc] p-4 md:p-6 lg:p-8">
+    <div className=" p-4 md:p-6 lg:p-8">
       <div className="mx-auto ">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -219,7 +219,7 @@ export default function Subscription() {
         {isError ? <div className="p-6 text-red-500">Failed to load plans.</div> : null}
 
         {!isLoading && !isError ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {plans.map((plan) => (
               <SubscriptionPlanCard
                 key={plan.id}

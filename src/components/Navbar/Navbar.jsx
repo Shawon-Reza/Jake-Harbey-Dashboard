@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import profile from "../../assets/images/profile.png";
 export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
   return (
-    <div className="sticky top-0 z-50 flex h-24 w-screen shrink-0 items-center justify-between border-b border-[#E7E7E7] bg-white px-4 py-8 md:w-full md:px-12">
+    <div className="sticky top-0 z-50 flex  w-screen shrink-0 items-center justify-between border-b border-[#E7E7E7] bg-white px-4 py-4 md:w-full md:px-12">
       <button
         type="button"
         onClick={onMenuClick}
