@@ -172,6 +172,39 @@ export const useUpdateDashboardPlanFeatureMutation = () => {
   });
 };
 
+export const useCreateDashboardPlanFeatureMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ planId, feature }) => {
+      const response = await axiosApi.post(`/dashboard/plans/${planId}/features/`, {
+        feature,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_PLANS_QUERY_KEY });
+    },
+  });
+};
+
+export const useCreateDashboardPlanMissingFeatureMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ planId, missing_feature }) => {
+      const response = await axiosApi.post(
+        `/dashboard/plans/${planId}/missing-features/`,
+        { missing_feature },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_PLANS_QUERY_KEY });
+    },
+  });
+};
+
 export const useUpdateDashboardPlanMissingFeatureMutation = () => {
   const queryClient = useQueryClient();
 

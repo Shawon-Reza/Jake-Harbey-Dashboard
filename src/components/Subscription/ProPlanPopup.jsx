@@ -9,6 +9,8 @@ export const ProPlanPopup = ({
   onSave,
   editData = null,
   mode = "create",
+  onCreateFeature,
+  onCreateMissingFeature,
   onDeleteFeature,
   onDeleteMissingFeature,
 }) => {
@@ -21,6 +23,10 @@ export const ProPlanPopup = ({
   const [missingFeatures, setMissingFeatures] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState(null);
+  const [newFeatureLabel, setNewFeatureLabel] = useState("");
+  const [newMissingFeatureLabel, setNewMissingFeatureLabel] = useState("");
+  const [isAddingFeature, setIsAddingFeature] = useState(false);
+  const [isAddingMissingFeature, setIsAddingMissingFeature] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -31,17 +37,17 @@ export const ProPlanPopup = ({
         setFeatures(
           Array.isArray(editData.featureItems)
             ? editData.featureItems.map((item) => ({
-                id: item.id,
-                feature: item.feature || "",
-              }))
+              id: item.id,
+              feature: item.feature || "",
+            }))
             : [],
         );
         setMissingFeatures(
           Array.isArray(editData.missingFeatureItems)
             ? editData.missingFeatureItems.map((item) => ({
-                id: item.id,
-                missing_feature: item.missing_feature || "",
-              }))
+              id: item.id,
+              missing_feature: item.missing_feature || "",
+            }))
             : [],
         );
       } else if (editData) {
@@ -62,6 +68,8 @@ export const ProPlanPopup = ({
         setMissingFeatures([]);
       }
       setNewFeature("");
+      setNewFeatureLabel("");
+      setNewMissingFeatureLabel("");
     }
   }, [editData, isFeatureEditMode, isOpen]);
 
@@ -108,6 +116,50 @@ export const ProPlanPopup = ({
     setMissingFeatures((current) => current.filter((_, itemIndex) => itemIndex !== index));
   };
 
+  const handleCreateFeature = async () => {
+    const value = newFeatureLabel.trim();
+    if (!value) return;
+
+    try {
+      setIsAddingFeature(true);
+      const createdFeature = await Promise.resolve(onCreateFeature?.(value));
+      if (createdFeature) {
+        setFeatures((current) => [
+          ...current,
+          {
+            id: createdFeature.id ?? `local-feature-${Date.now()}`,
+            feature: createdFeature.feature ?? value,
+          },
+        ]);
+      }
+      setNewFeatureLabel("");
+    } finally {
+      setIsAddingFeature(false);
+    }
+  };
+
+  const handleCreateMissingFeature = async () => {
+    const value = newMissingFeatureLabel.trim();
+    if (!value) return;
+
+    try {
+      setIsAddingMissingFeature(true);
+      const createdMissingFeature = await Promise.resolve(onCreateMissingFeature?.(value));
+      if (createdMissingFeature) {
+        setMissingFeatures((current) => [
+          ...current,
+          {
+            id: createdMissingFeature.id ?? `local-missing-${Date.now()}`,
+            missing_feature: createdMissingFeature.missing_feature ?? value,
+          },
+        ]);
+      }
+      setNewMissingFeatureLabel("");
+    } finally {
+      setIsAddingMissingFeature(false);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -115,15 +167,15 @@ export const ProPlanPopup = ({
         onSave(
           isFeatureEditMode
             ? {
-                featureItems: features,
-                missingFeatureItems: missingFeatures,
-              }
+              featureItems: features,
+              missingFeatureItems: missingFeatures,
+            }
             : {
-                planName,
-                price,
-                duration,
-                features,
-              },
+              planName,
+              price,
+              duration,
+              features,
+            },
         ),
       );
       onClose();
@@ -144,8 +196,8 @@ export const ProPlanPopup = ({
             {isFeatureEditMode
               ? "Edit Plan Features"
               : editData
-              ? "Edit Plan"
-              : "Add New Plan"}
+                ? "Edit Plan"
+                : "Add New Plan"}
           </h2>
           <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
             <CgClose className="w-4 h-4" />
@@ -221,6 +273,25 @@ export const ProPlanPopup = ({
 
             {isFeatureEditMode ? (
               <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newFeatureLabel}
+                    onChange={(e) => setNewFeatureLabel(e.target.value)}
+                    placeholder="Add new feature"
+                    className="flex-1 rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onKeyDown={(e) => e.key === "Enter" && handleCreateFeature()}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCreateFeature}
+                    disabled={isAddingFeature}
+                    className="inline-flex items-center justify-center rounded-md border border-gray px-3 py-2 text-sm text-gray-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+
                 {features.length ? (
                   features.map((feature, index) => (
                     <div
@@ -241,7 +312,6 @@ export const ProPlanPopup = ({
                         className="w-full rounded-md border border-slate-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="flex items-center justify-between gap-3 text-xs text-slate-400 sm:justify-end">
-                        <span>Feature ID: {feature.id ?? "N/A"}</span>
                         <button
                           type="button"
                           onClick={() => deleteFeatureItem(feature, index)}
@@ -304,6 +374,25 @@ export const ProPlanPopup = ({
               </label>
 
               <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newMissingFeatureLabel}
+                    onChange={(e) => setNewMissingFeatureLabel(e.target.value)}
+                    placeholder="Add new missing feature"
+                    className="flex-1 rounded-md border border-gray p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onKeyDown={(e) => e.key === "Enter" && handleCreateMissingFeature()}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCreateMissingFeature}
+                    disabled={isAddingMissingFeature}
+                    className="inline-flex items-center justify-center rounded-md border border-gray px-3 py-2 text-sm text-gray-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+
                 {missingFeatures.map((feature, index) => (
                   <div
                     key={feature.id || index}

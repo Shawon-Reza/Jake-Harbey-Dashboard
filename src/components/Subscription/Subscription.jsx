@@ -5,6 +5,8 @@ import { ProPlanPopup } from "./ProPlanPopup";
 import SubscriptionPlanCard from "./SubscriptionPlanCard";
 import {
   useDashboardPlansQuery,
+  useCreateDashboardPlanFeatureMutation,
+  useCreateDashboardPlanMissingFeatureMutation,
   useDeleteDashboardPlanFeatureMutation,
   useDeleteDashboardPlanMissingFeatureMutation,
   useUpdateDashboardPlanFeatureMutation,
@@ -22,6 +24,8 @@ export default function Subscription() {
   const [deletedPlanIds, setDeletedPlanIds] = useState([]);
   const updatePlanFeature = useUpdateDashboardPlanFeatureMutation();
   const updatePlanMissingFeature = useUpdateDashboardPlanMissingFeatureMutation();
+  const createPlanFeature = useCreateDashboardPlanFeatureMutation();
+  const createPlanMissingFeature = useCreateDashboardPlanMissingFeatureMutation();
   const deletePlanFeature = useDeleteDashboardPlanFeatureMutation();
   const deletePlanMissingFeature = useDeleteDashboardPlanMissingFeatureMutation();
 
@@ -206,6 +210,24 @@ export default function Subscription() {
     await deletePlanMissingFeature.mutateAsync(item.id);
   };
 
+  const handleCreatePlanFeature = async (feature) => {
+    if (!editPlanData?.id || !feature?.trim()) return;
+
+    await createPlanFeature.mutateAsync({
+      planId: editPlanData.id,
+      feature: feature.trim(),
+    });
+  };
+
+  const handleCreatePlanMissingFeature = async (missingFeature) => {
+    if (!editPlanData?.id || !missingFeature?.trim()) return;
+
+    await createPlanMissingFeature.mutateAsync({
+      planId: editPlanData.id,
+      missing_feature: missingFeature.trim(),
+    });
+  };
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-[#f8fafc] p-4 md:p-6 lg:p-8">
       <div className="mx-auto ">
@@ -251,6 +273,8 @@ export default function Subscription() {
         onSave={handleSaveProPlan}
         editData={editPlanData}
         mode={planPopupMode}
+        onCreateFeature={handleCreatePlanFeature}
+        onCreateMissingFeature={handleCreatePlanMissingFeature}
         onDeleteFeature={handleDeletePlanFeature}
         onDeleteMissingFeature={handleDeletePlanMissingFeature}
       />
