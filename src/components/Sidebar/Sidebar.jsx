@@ -6,6 +6,7 @@ import {
   CreditCard,
   House,
   LogOut,
+  X,
   Users,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
@@ -13,104 +14,131 @@ import { logout } from "../../features/authSlice";
 import logo from "../../assets/images/logo.svg";
 import { toast } from "sonner";
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate, onClose }) {
   const dispatch = useDispatch();
+
   const handleLogout = () => {
     try {
       localStorage.removeItem("auth");
+      dispatch(logout());
       toast.success("Logout successful!");
     } catch (error) {
       toast.error("Error occurred while logging out.");
     }
   };
+
+  const handleNavigate = () => {
+    if (typeof onNavigate === "function") {
+      onNavigate();
+    }
+  };
+
   return (
-    <div className=" bg-primary text-[#FFFCFC] h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-72">
-      <div className="p-10 mx-auto">
+    <div className="sticky left-0 z-20 flex h-screen w-full flex-col justify-between bg-primary text-[#FFFCFC] md:w-64 xl:w-72">
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute left-4 top-4 z-30 rounded-lg p-2 text-white transition hover:bg-[#0ACCFF] md:hidden"
+        aria-label="Close sidebar"
+      >
+        <X className="h-7 w-7" />
+      </button>
+
+      <div className="mx-auto p-10 md:mx-0 md:p-10">
         <img src={logo} alt="" />
       </div>
 
-      <nav className="flex-1 font-poppins mt-10">
-        <ul className="space-y-3">
-          <h1 className="px-12">GENERAL</h1>
-          <li className="px-8">
+      <nav className="mt-6 flex-1 font-poppins md:mt-10">
+        <ul className="flex w-full flex-col items-stretch space-y-3 px-4 md:block md:px-0">
+          <h1 className="w-full px-0 text-center md:px-12 md:text-left">GENERAL</h1>
+          <li className="w-full px-0 md:px-8">
             <NavLink
-              to={"/"}
-              className="flex items-center hover:bg-[#0ACCFF] text-[#FFFCFC] px-4 py-4 rounded-lg"
+              to="/"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <House className="mr-3 text-2xl" />
+              <House className="shrink-0 text-2xl md:mr-3" />
               Dashboard
             </NavLink>
           </li>
-          <li className="px-8 mb-4">
+          <li className="mb-4 w-full px-0 md:px-8">
             <NavLink
-              to={"/users"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/users"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <Users className="mr-3 text-2xl" />
+              <Users className="shrink-0 text-2xl md:mr-3" />
               User Management
             </NavLink>
           </li>
-          <li className="px-8">
+          <li className="w-full px-0 md:px-8">
             <NavLink
-              to={"/inbox"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/inbox"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <BriefcaseBusiness className="mr-3 text-2xl" />
+              <BriefcaseBusiness className="shrink-0 text-2xl md:mr-3" />
               Inbox
             </NavLink>
           </li>
-          <li className="px-8">
+          <li className="w-full px-0 md:px-8">
             <NavLink
-              to={"/jobs"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/jobs"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <BriefcaseBusiness className="mr-3 text-2xl" />
+              <BriefcaseBusiness className="shrink-0 text-2xl md:mr-3" />
               Jobs
             </NavLink>
           </li>
-          <li className="px-8">
+          <li className="w-full px-0 md:px-8">
             <NavLink
-              to={"/technicians"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/technicians"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <Users className="mr-3 text-2xl" />
+              <Users className="shrink-0 text-2xl md:mr-3" />
               Technicians
             </NavLink>
           </li>
-          <li className="px-8 mb-4">
+          <li className="mb-4 w-full px-0 md:px-8">
             <NavLink
-              to={"/customers"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/customers"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <Users className="mr-3 text-2xl" />
+              <Users className="shrink-0 text-2xl md:mr-3" />
               Customers
             </NavLink>
           </li>
-          <li className="px-8 mb-4">
+          <li className="mb-4 w-full px-0 md:px-8">
             <NavLink
-              to={"/subscription"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/subscription"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <CreditCard className="mr-3 text-2xl" />
+              <CreditCard className="shrink-0 text-2xl md:mr-3" />
               Subscription Plans
             </NavLink>
           </li>
-          <h1 className="px-12 pt-4">TOOLS</h1>
-          <li className="px-8">
+          <h1 className="w-full px-0 pt-4 text-center md:px-12 md:text-left">TOOLS</h1>
+          <li className="w-full px-0 md:px-8">
             <NavLink
-              to={"/settings"}
-              className="flex items-center px-4 py-4 hover:bg-[#0ACCFF] text-[#FFFCFC] rounded-lg"
+              to="/settings"
+              onClick={handleNavigate}
+              className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-4 text-center text-[#FFFCFC] hover:bg-[#0ACCFF] md:justify-start md:gap-0 md:text-left"
             >
-              <LuSettings className="mr-3 text-2xl" />
+              <LuSettings className="shrink-0 text-2xl md:mr-3" />
               Account & Settings
             </NavLink>
           </li>
         </ul>
       </nav>
-      <Link to={"/login"}>
+
+      <Link to="/login">
         <button
           onClick={handleLogout}
-          className="flex items-center px-8 py-8 text-xl w-full mx-auto text-[#FFFCFC]"
+          className="mx-auto flex w-full items-center px-8 py-8 text-xl text-[#FFFCFC]"
         >
           <LogOut className="mr-3" />
           Logout

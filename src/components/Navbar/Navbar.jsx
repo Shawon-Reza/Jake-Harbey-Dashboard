@@ -1,11 +1,20 @@
 import React from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import profile from "../../assets/images/profile.png";
-export default function Navbar() {
+export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
   return (
-    <div className="flex h-24 px-12 py-8 items-center justify-end border-b bg-white border-[#E7E7E7] w-full sticky top-0 z-50">
-      <div className="flex items-center gap-10">
+    <div className="sticky top-0 z-50 flex h-24 w-screen shrink-0 items-center justify-between border-b border-[#E7E7E7] bg-white px-4 py-8 md:w-full md:px-12">
+      <button
+        type="button"
+        onClick={onMenuClick}
+        className="inline-flex items-center justify-center rounded-xl p-2 text-[#2A2A2A] transition hover:bg-gray-50 md:hidden"
+        aria-label="Open sidebar"
+      >
+        {isSidebarOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+      </button>
+
+      <div className="ml-auto flex items-center gap-4 md:gap-10">
         {/* Notification Bell */}
         <Link to="/notifications" className="relative p-2 text-[#1A9C9C] hover:bg-gray-50 rounded-xl transition-colors group">
           <Bell className="w-8 h-8" />
