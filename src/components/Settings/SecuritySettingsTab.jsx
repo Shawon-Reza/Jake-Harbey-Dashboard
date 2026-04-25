@@ -23,13 +23,16 @@ export default function SecuritySettingsTab({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
         <PasswordInput
           label="Old Password"
+          placeholder="Enter current password"
           isVisible={showOldPassword}
           value={securityData.oldPassword}
           onChange={(e) => onSecurityChange('oldPassword', e.target.value)}
           onToggle={onToggleOldPassword}
+          
         />
         <PasswordInput
           label="New Password"
+          placeholder="Enter new password"
           isVisible={showNewPassword}
           value={securityData.newPassword}
           onChange={(e) => onSecurityChange('newPassword', e.target.value)}
@@ -37,6 +40,7 @@ export default function SecuritySettingsTab({
         />
         <PasswordInput
           label="Confirm Password"
+          placeholder="Re-enter new password"
           isVisible={showConfirmPassword}
           value={securityData.confirmPassword}
           onChange={(e) => onSecurityChange('confirmPassword', e.target.value)}

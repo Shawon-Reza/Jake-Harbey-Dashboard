@@ -1,8 +1,9 @@
-import { Check, Edit2, Trash2 } from "lucide-react";
+import { Check, Edit2, Trash2, X } from "lucide-react";
 import { formatPrice } from "./subscriptionData";
 
 const SubscriptionPlanCard = ({ plan, onEdit, onDelete }) => {
   const Icon = plan.icon;
+  const hasActions = typeof onEdit === "function" && typeof onDelete === "function";
 
   return (
     <div
@@ -28,49 +29,63 @@ const SubscriptionPlanCard = ({ plan, onEdit, onDelete }) => {
               : "bg-slate-100 text-slate-500"
           }`}
         >
-          <Icon className="h-5 w-5" />
+          {Icon ? <Icon className="h-5 w-5" /> : null}
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onEdit(plan.id)}
-            className="text-slate-400 transition hover:text-slate-700"
-            aria-label={`Edit ${plan.name} plan`}
-          >
-            <Edit2 className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => onDelete(plan.id)}
-            className="text-[#ff6b6b] transition hover:text-red-600"
-            aria-label={`Delete ${plan.name} plan`}
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
+        {hasActions ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onEdit(plan.id)}
+              className="text-slate-400 transition hover:text-slate-700"
+              aria-label={`Edit ${plan.name} plan`}
+            >
+              <Edit2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => onDelete(plan.id)}
+              className="text-[#ff6b6b] transition hover:text-red-600"
+              aria-label={`Delete ${plan.name} plan`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <div className="mb-5">
         <h3 className="text-lg font-semibold text-slate-800">{plan.name}</h3>
+        <p className="mt-1 text-xs text-slate-400">{plan.tagline || "N/A"}</p>
 
         <div className="mt-2 flex items-end gap-1">
           <span className="text-[2rem] font-bold leading-none text-slate-900">
             {formatPrice(plan.price)}
           </span>
-          {plan.duration && (
+          {plan.duration ? (
             <span className="pb-1 text-sm font-medium text-slate-400">
               {plan.duration}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
 
       <div className="space-y-2.5">
-        {plan.features.map((feature) => (
+        {(plan.features || []).map((feature) => (
           <div key={feature} className="flex items-start gap-2 text-sm">
             <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
             <span className="text-slate-600">{feature}</span>
           </div>
         ))}
+
+        {(plan.missingFeatures || []).map((feature) => (
+          <div key={feature} className="flex items-start gap-2 text-sm">
+            <X className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+            <span className="text-slate-400">{feature}</span>
+          </div>
+        ))}
+
+        {!plan.features?.length && !plan.missingFeatures?.length ? (
+          <div className="text-sm text-slate-400">N/A</div>
+        ) : null}
       </div>
     </div>
   );

@@ -101,6 +101,7 @@ export const initialPlans = [
 ];
 
 export const formatPrice = (price) => {
+  if (price === 0 || price === "0") return "Free";
   if (!price) return "Free";
 
   const value = String(price).trim();

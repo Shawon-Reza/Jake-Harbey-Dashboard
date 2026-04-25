@@ -42,9 +42,9 @@ export default function Settings() {
   });
 
   const [securityData, setSecurityData] = useState({
-    oldPassword: 'password123',
-    newPassword: 'password123',
-    confirmPassword: '@uyad))11n'
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
 
   const passwordRequirements = [
