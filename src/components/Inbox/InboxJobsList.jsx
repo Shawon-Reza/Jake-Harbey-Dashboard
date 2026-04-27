@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronRight, MapPin, Wrench } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const toDisplay = (value) => {
   if (value === null || value === undefined || value === '') return 'N/A';
@@ -15,12 +16,16 @@ const mapBadgeToLabel = (badge) => {
 };
 
 function InboxJobRow({ job, onSelect, getAvatarColor, getStatusStyles }) {
+  const navigate = useNavigate();
   const badges = Array.isArray(job.badge) ? job.badge : [];
   const progressValue = typeof job.progress === 'number' ? Math.max(0, Math.min(100, job.progress)) : 0;
 
   return (
     <div
-      onClick={() => onSelect(job)}
+      onClick={() => {
+        if (onSelect) onSelect(job);
+        navigate(`/inbox/${job.id}`);
+      }}
       className="group relative border-y border-transparent border-b-[#F5F5F5] hover:bg-[#F0FAFB] px-2 sm:px-3 md:px-4 py-3 sm:py-4 md:py-6 transition-all cursor-pointer flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 lg:gap-6"
     >
       <div className="flex items-start sm:items-center gap-3 md:gap-6 flex-1 min-w-0 w-full">
@@ -45,7 +50,7 @@ function InboxJobRow({ job, onSelect, getAvatarColor, getStatusStyles }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <div className="flex items-start sm:items-center gap-2 text-[#2A2A2A] font- text-xs sm:text-sm">
+            <div className="flex items-start gap-2 text-xs text-[#2A2A2A] sm:items-center sm:text-sm">
               <Wrench className="text-[#9CA3AF] mt-0.5 sm:mt-0" size={16} strokeWidth={3.5} />
               <span className="truncate">{toDisplay(job.service)}</span>
               <span className="text-gray-400 truncate max-w-[220px] sm:max-w-[320px] md:max-w-[400px]">- {toDisplay(job.description)}</span>

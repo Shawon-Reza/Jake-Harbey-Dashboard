@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDashboardInboxFlagsListQuery, useDashboardJobDetailsQuery } from '../../Api/dashboardApi';
 import { base_URL } from '../../Api/config';
 import profile from '../../assets/images/profile.png';
+import AssignTechnician from '../Jobs/AssignTechnician';
 
 const toDisplay = (value) => {
     if (value === null || value === undefined || value === '') return 'N/A';
@@ -29,6 +30,8 @@ const toImageSrc = (value) => {
 const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const [showStatusDropdown, setShowStatusDropdown] = useState(false);
     const { id } = useParams();
+
+
     const jobId = job?.id || id;
     const { data, isLoading, isError } = useDashboardJobDetailsQuery(jobId);
     console.log(data)
@@ -187,62 +190,72 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div className="bg-white rounded-2xl p-6 border border-[#E7E7E7] shadow-sm">
-                        <h3 className="text-xl text-[#454545] mb-8">Customer & Vehicle Details</h3>
-                        <div className="grid grid-cols-1">
-                            {infoRows.map((detail) => (
-                                <div key={detail.label} className="flex pb-4">
-                                    <span className="w-28 text-gray-400">{detail.label}</span>
-                                    <span className="text-[#454545] flex-1">: {toDisplay(detail.value)}</span>
+                <div className='grid grid-cols-12 gap-6'>
+                    <div className="col-span-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div className="bg-white rounded-2xl p-6 border border-[#E7E7E7] shadow-sm">
+                                <h3 className="text-xl text-[#454545] mb-8">Customer & Vehicle Details</h3>
+                                <div className="grid grid-cols-1">
+                                    {infoRows.map((detail) => (
+                                        <div key={detail.label} className="flex pb-4">
+                                            <span className="w-28 text-gray-400">{detail.label}</span>
+                                            <span className="text-[#454545] flex-1">: {toDisplay(detail.value)}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                            </div>
 
-                    <div className="bg-white rounded-2xl p-6 border border-[#E7E7E7] shadow-sm">
-                        <h3 className="text-xl text-[#454545] mb-8">Damage & Images</h3>
-                        <div className="bg-[#92E8FB]/20 rounded-[24px] p-6 mb-8">
-                            <h4 className="font-medium text-[#454545] text-lg mb-3">Damaged Areas</h4>
-                            <p className="text-[#454545] text-sm opacity-70 leading-relaxed">
-                                {Array.isArray(damage.damaged_areas) && damage.damaged_areas.length
-                                    ? damage.damaged_areas.join(', ')
-                                    : 'N/A'}
-                            </p>
-                            <h4 className="font-medium text-[#454545] text-lg mt-6 mb-3">Damage Breakdown</h4>
-                            <p className="text-[#454545] text-sm opacity-70 leading-relaxed">{toDisplay(damage.damage_breakdown)}</p>
+                            <div className="bg-white rounded-2xl p-6 border border-[#E7E7E7] shadow-sm">
+                                <h3 className="text-xl text-[#454545] mb-8">Damage & Images</h3>
+                                <div className="bg-[#92E8FB]/20 rounded-[24px] p-6 mb-8">
+                                    <h4 className="font-medium text-[#454545] text-lg mb-3">Damaged Areas</h4>
+                                    <p className="text-[#454545] text-sm opacity-70 leading-relaxed">
+                                        {Array.isArray(damage.damaged_areas) && damage.damaged_areas.length
+                                            ? damage.damaged_areas.join(', ')
+                                            : 'N/A'}
+                                    </p>
+                                    <h4 className="font-medium text-[#454545] text-lg mt-6 mb-3">Damage Breakdown</h4>
+                                    <p className="text-[#454545] text-sm opacity-70 leading-relaxed">{toDisplay(damage.damage_breakdown)}</p>
+                                </div>
+                                {vehicleImages.length ? (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {vehicleImages.map((image) => (
+                                            <img key={image.id} src={toImageSrc(image.image)} alt="Vehicle" className="w-full h-32 rounded-xl object-cover border border-[#E7E7E7]" />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-gray-400">N/A</div>
+                                )}
+                            </div>
                         </div>
-                        {vehicleImages.length ? (
-                            <div className="grid grid-cols-2 gap-4">
-                                {vehicleImages.map((image) => (
-                                    <img key={image.id} src={toImageSrc(image.image)} alt="Vehicle" className="w-full h-32 rounded-xl object-cover border border-[#E7E7E7]" />
+
+                        <div className="bg-white rounded-[32px] p-10 border border-[#E7E7E7] shadow-sm">
+                            <h3 className="text-xl font-bold text-[#454545] mb-10">Pricing & Payments</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                {pricingRows.map((p, i) => (
+                                    <div key={i} className="p-8 rounded-2xl border border-[#E5E7EB] bg-[#E5E7EB]/30">
+                                        <p className="text-[#6B7280] font-medium text-lg mb-6">{p.label}</p>
+                                        <p className="text-[32px] font-medium text-[#111827] mb-3">{p.value}</p>
+                                        {p.status !== 'N/A' ? (
+                                            <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${p.status === 'Paid' ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FEF3C7] text-[#D97706]'}`}>
+                                                {p.status}
+                                            </span>
+                                        ) : <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-500">N/A</span>}
+                                    </div>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="text-gray-400">N/A</div>
-                        )}
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-[32px] p-10 border border-[#E7E7E7] shadow-sm">
-                    <h3 className="text-xl font-bold text-[#454545] mb-10">Pricing & Payments</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        {pricingRows.map((p, i) => (
-                            <div key={i} className="p-8 rounded-2xl border border-[#E5E7EB] bg-[#E5E7EB]/30">
-                                <p className="text-[#6B7280] font-medium text-lg mb-6">{p.label}</p>
-                                <p className="text-[32px] font-medium text-[#111827] mb-3">{p.value}</p>
-                                {p.status !== 'N/A' ? (
-                                    <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${p.status === 'Paid' ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FEF3C7] text-[#D97706]'}`}>
-                                        {p.status}
-                                    </span>
-                                ) : <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-500">N/A</span>}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                                <div className="text-[#454545]">Total Cost Paid: <span className="font-medium">{toBooleanDisplay(data.total_cost_paid)}</span></div>
+                                <div className="text-[#454545]">Balance Paid: <span className="font-medium">{toBooleanDisplay(data.balance_paid)}</span></div>
+                                <div className="text-[#454545]">Deposit Paid: <span className="font-medium">{toBooleanDisplay(data.deposit_paid)}</span></div>
                             </div>
-                        ))}
+                        </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                        <div className="text-[#454545]">Total Cost Paid: <span className="font-medium">{toBooleanDisplay(data.total_cost_paid)}</span></div>
-                        <div className="text-[#454545]">Balance Paid: <span className="font-medium">{toBooleanDisplay(data.balance_paid)}</span></div>
-                        <div className="text-[#454545]">Deposit Paid: <span className="font-medium">{toBooleanDisplay(data.deposit_paid)}</span></div>
+
+
+
+                    <div className='col-span-4 h-full'>
+                        <AssignTechnician />
                     </div>
                 </div>
 

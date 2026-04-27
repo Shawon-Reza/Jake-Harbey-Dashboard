@@ -78,7 +78,7 @@ const CustomerProfileView = () => {
     return (
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
             <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
-                <div className="mb-6 flex items-center justify-between sm:mb-10">
+                <div className="mb-4 flex items-center justify-between sm:mb-5">
                     <button
                         onClick={() => navigate("/customers")}
                         className="flex items-center gap-3 text-[#454545] transition-all group sm:gap-4"

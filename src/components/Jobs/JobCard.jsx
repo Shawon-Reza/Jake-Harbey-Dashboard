@@ -95,13 +95,13 @@ const JobCard = ({ job, onClick, icons }) => {
                         {[...Array(7)].map((_, idx) => (
                             <div
                                 key={idx}
-                                className={`w-2.5 h-2.5 rounded-full ${idx < progressDots ? "bg-[#28A745]" : "bg-[#E7E7E7]"}`}
+                                className={`w-2 h-2 rounded-full ${idx < progressDots ? "bg-[#28A745]" : "bg-[#E7E7E7]"}`}
                             ></div>
                         ))}
                     </div>
                     <div className="flex items-center gap-2 ml-3">
                         <span
-                            className={`text-[13px] font-bold ${assignment === "Unassigned" ? "text-orange-500" : "text-[#454545]"}`}
+                            className={`text-sm font-bold ${assignment === "Unassigned" ? "text-orange-500" : "text-[#454545]"}`}
                         >
                             {assignment}
                         </span>

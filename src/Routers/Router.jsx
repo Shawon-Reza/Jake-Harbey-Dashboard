@@ -35,6 +35,10 @@ export const router = createBrowserRouter([
         element: <Inbox />,
       },
       {
+        path: "/inbox/:id",
+        element: <JobDetails />,
+      },
+      {
         path: "/jobs",
         element: <Jobs />,
       },
