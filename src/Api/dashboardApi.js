@@ -4,6 +4,8 @@ import axiosApi from "./axiosInstance";
 export const DASHBOARD_QUERY_KEY = ["dashboard", "overview"];
 export const DASHBOARD_CUSTOMERS_QUERY_KEY = ["dashboard", "customers", "all"];
 export const DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY = ["dashboard", "customers", "details"];
+export const DASHBOARD_USERS_QUERY_KEY = ["dashboard", "users", "all"];
+export const DASHBOARD_USERS_STATS_QUERY_KEY = ["dashboard", "users", "statistics"];
 export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
 export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
 export const DASHBOARD_INBOX_QUERY_KEY = ["dashboard", "inbox", "all"];
@@ -78,6 +80,32 @@ export const useDashboardCustomersQuery = () => {
     queryKey: DASHBOARD_CUSTOMERS_QUERY_KEY,
     queryFn: async () => {
       const response = await axiosApi.get("/dashboard/customers/all/");
+      return response.data;
+    },
+    enabled: hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardUsersQuery = () => {
+  return useQuery({
+    queryKey: DASHBOARD_USERS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosApi.get("/dashboard/users/");
+      return response.data;
+    },
+    enabled: hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardUsersStatisticsQuery = () => {
+  return useQuery({
+    queryKey: DASHBOARD_USERS_STATS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosApi.get("/dashboard/users/statistics/");
       return response.data;
     },
     enabled: hasAccessToken(),
