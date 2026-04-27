@@ -40,6 +40,8 @@ export function UserTypeBadge({ userType }) {
   }
 
   switch (userType.toLowerCase()) {
+    case 'admin':
+      return <span className="inline-flex items-center rounded-full bg-[#25b566] px-3 py-1 text-xs font-medium text-white">{userType}</span>;
     case 'customer':
       return <span className="inline-flex items-center rounded-full bg-[#b58025] px-3 py-1 text-xs font-medium text-white">{userType}</span>;
     case 'technician':
@@ -48,6 +50,25 @@ export function UserTypeBadge({ userType }) {
       return <span className="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600">{userType}</span>;
     default:
       return null;
+  }
+}
+
+export function RoleBadge({ role }) {
+  if (!role) {
+    return <span className="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600">N/A</span>;
+  }
+
+  switch (role.toLowerCase()) {
+    case 'admin':
+      return <span className="inline-flex items-center rounded-full bg-[#111827] px-3 py-1 text-xs font-medium text-white">Admin</span>;
+    case 'technician':
+      return <span className="inline-flex items-center rounded-full bg-[#7c3aed] px-3 py-1 text-xs font-medium text-white">Technician</span>;
+    case 'customer':
+      return <span className="inline-flex items-center rounded-full bg-[#b58025] px-3 py-1 text-xs font-medium text-white">Customer</span>;
+    case 'guest':
+      return <span className="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600">Guest</span>;
+    default:
+      return <span className="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600 capitalize">{role}</span>;
   }
 }
 

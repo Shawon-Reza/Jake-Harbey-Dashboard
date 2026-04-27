@@ -114,6 +114,21 @@ export const useDashboardUsersStatisticsQuery = () => {
   });
 };
 
+export const useDeleteDashboardUserMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userId) => {
+      const response = await axiosApi.delete(`/dashboard/users/${userId}/`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_USERS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_USERS_STATS_QUERY_KEY });
+    },
+  });
+};
+
 export const useDashboardCustomerDetailsQuery = (userId) => {
   return useQuery({
     queryKey: [...DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY, userId],

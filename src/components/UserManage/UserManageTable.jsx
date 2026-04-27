@@ -1,8 +1,8 @@
 import React from 'react';
 import { Eye, Trash2 } from 'lucide-react';
-import { StatusBadge, SubscriptionBadge, UserTypeBadge } from './UserManageBadges';
+import { RoleBadge, StatusBadge, SubscriptionBadge, UserTypeBadge } from './UserManageBadges';
 
-export function UserManageTable({ users, onViewUser, onDeleteUser }) {
+export function UserManageTable({ users, onViewUser, onDeleteUser, isDeletingUser = false }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm text-slate-600">
@@ -11,6 +11,7 @@ export function UserManageTable({ users, onViewUser, onDeleteUser }) {
             <th scope="col" className="border-b border-slate-100 px-6 py-4 font-medium">Name</th>
             <th scope="col" className="border-b border-slate-100 px-6 py-4 font-medium">Email</th>
             <th scope="col" className="border-b border-slate-100 px-6 py-4 font-medium">Location</th>
+            <th scope="col" className="border-b border-slate-100 px-6 py-4 text-center font-medium">Role</th>
             <th scope="col" className="border-b border-slate-100 px-6 py-4 text-center font-medium">Subscription/Status</th>
             <th scope="col" className="border-b border-slate-100 px-6 py-4 text-center font-medium">User Type</th>
             <th scope="col" className="border-b border-slate-100 px-6 py-4 text-center font-medium">Status</th>
@@ -20,7 +21,7 @@ export function UserManageTable({ users, onViewUser, onDeleteUser }) {
         <tbody className="divide-y divide-slate-100/80 bg-white">
           {users.length === 0 ? (
             <tr>
-              <td colSpan={7} className="px-6 py-10 text-center text-sm text-slate-500">
+              <td colSpan={8} className="px-6 py-10 text-center text-sm text-slate-500">
                 No users found.
               </td>
             </tr>
@@ -30,6 +31,11 @@ export function UserManageTable({ users, onViewUser, onDeleteUser }) {
               <td className="whitespace-nowrap px-6 py-4 text-[13px] text-slate-700">{user.name}</td>
               <td className="whitespace-nowrap px-6 py-4 text-[13px]">{user.email}</td>
               <td className="whitespace-nowrap px-6 py-4 text-[13px]">{user.location || 'N/A'}</td>
+              <td className="whitespace-nowrap px-6 py-4 text-center">
+                <div className="flex justify-center">
+                  <RoleBadge role={user.role} />
+                </div>
+              </td>
               <td className="whitespace-nowrap px-6 py-4 text-center">
                 <div className="flex justify-center">
                   <SubscriptionBadge subscription={user.subscriptionStatus} />
@@ -50,7 +56,12 @@ export function UserManageTable({ users, onViewUser, onDeleteUser }) {
                   <button onClick={() => onViewUser(user)} className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900" title="View">
                     <Eye className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => onDeleteUser(user)} className="flex h-7 w-7 items-center justify-center rounded-md border border-red-100 text-red-500 transition-all hover:bg-red-50 hover:text-red-700" title="Delete">
+                  <button
+                    onClick={() => onDeleteUser(user)}
+                    disabled={isDeletingUser}
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-red-100 text-red-500 transition-all hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    title="Delete"
+                  >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>

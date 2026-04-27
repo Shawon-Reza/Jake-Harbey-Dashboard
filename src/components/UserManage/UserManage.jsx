@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { UserManageStatsCard } from './UserManageStatsCard';
 import { UserManageTable } from './UserManageTable';
 import { UserDetailModal } from './UserDetailModal';
-import { DeleteUserModal } from './DeleteUserModal';
 import {
+  useDeleteDashboardUserMutation,
   useDashboardUsersQuery,
   useDashboardUsersStatisticsQuery,
 } from '../../Api/dashboardApi';
@@ -62,10 +63,10 @@ const mapUsers = (users) => {
 export default function UserManage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userToDelete, setUserToDelete] = useState(null);
 
   const { data: usersResponse, isLoading: isUsersLoading, isError: isUsersError } = useDashboardUsersQuery();
   const { data: usersStats, isLoading: isStatsLoading, isError: isStatsError } = useDashboardUsersStatisticsQuery();
+  const { mutateAsync: deleteUser, isPending: isDeletingUser } = useDeleteDashboardUserMutation();
 
   const users = useMemo(() => {
     const list = Array.isArray(usersResponse)
@@ -92,9 +93,39 @@ export default function UserManage() {
     });
   }, [searchTerm, users]);
 
-  const handleDelete = () => {
-    if (userToDelete) {
-      setUserToDelete(null);
+  const handleDelete = async (user) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      await deleteUser(user.id);
+
+      if (selectedUser?.id === user.id) {
+        setSelectedUser(null);
+      }
+
+      await Swal.fire({
+        title: 'Deleted!',
+        text: 'The user has been deleted.',
+        icon: 'success',
+      });
+    } catch {
+      await Swal.fire({
+        title: 'Delete failed',
+        text: 'Unable to delete this user right now.',
+        icon: 'error',
+      });
     }
   };
 
@@ -159,13 +190,13 @@ export default function UserManage() {
           <UserManageTable
             users={filteredUsers}
             onViewUser={setSelectedUser}
-            onDeleteUser={setUserToDelete}
+            onDeleteUser={handleDelete}
+            isDeletingUser={isDeletingUser}
           />
         </div>
       </div>
 
       <UserDetailModal user={selectedUser} onClose={() => setSelectedUser(null)} />
-      <DeleteUserModal user={userToDelete} onClose={() => setUserToDelete(null)} onConfirm={handleDelete} />
     </div>
   );
 }

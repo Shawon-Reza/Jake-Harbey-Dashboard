@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { SubscriptionBadge, UserTypeBadge } from './UserManageBadges';
+import { RoleBadge, SubscriptionBadge, UserTypeBadge } from './UserManageBadges';
 
 export function UserDetailModal({ user, onClose }) {
   if (!user) {
@@ -29,6 +29,10 @@ export function UserDetailModal({ user, onClose }) {
             <div>
               <p className="mb-1.5 text-[12px] font-semibold text-slate-400">User Type</p>
               <UserTypeBadge userType={user.userType} />
+            </div>
+            <div>
+              <p className="mb-1.5 text-[12px] font-semibold text-slate-400">Role</p>
+              <RoleBadge role={user.role} />
             </div>
             <div>
               <p className="mb-1.5 text-[12px] font-semibold text-slate-400">Email</p>
