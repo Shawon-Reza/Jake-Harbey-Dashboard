@@ -8,6 +8,7 @@ export const DASHBOARD_USERS_QUERY_KEY = ["dashboard", "users", "all"];
 export const DASHBOARD_USERS_STATS_QUERY_KEY = ["dashboard", "users", "statistics"];
 export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
 export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
+export const DASHBOARD_INBOX_FLAGS_QUERY_KEY = ["dashboard", "inbox", "flags", "list"];
 export const DASHBOARD_INBOX_QUERY_KEY = ["dashboard", "inbox", "all"];
 export const DASHBOARD_PLANS_QUERY_KEY = ["dashboard", "plans", "all"];
 export const DASHBOARD_TECHNICIANS_QUERY_KEY = ["dashboard", "technicians", "all"];
@@ -167,6 +168,19 @@ export const useDashboardJobDetailsQuery = (jobId) => {
     },
     enabled: Boolean(jobId) && hasAccessToken(),
     staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useDashboardInboxFlagsListQuery = () => {
+  return useQuery({
+    queryKey: DASHBOARD_INBOX_FLAGS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await axiosApi.get("/dashboard/inbox/flags/list/");
+      return response.data;
+    },
+    enabled: hasAccessToken(),
+    staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 };

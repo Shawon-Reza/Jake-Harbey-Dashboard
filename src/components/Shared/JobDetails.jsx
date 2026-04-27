@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowLeft, Check, ChevronDown, Clock, PenTool } from 'lucide-react';
-import { useParams } from 'react-router-dom';
-import { useDashboardJobDetailsQuery } from '../../Api/dashboardApi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDashboardInboxFlagsListQuery, useDashboardJobDetailsQuery } from '../../Api/dashboardApi';
 import { base_URL } from '../../Api/config';
 import profile from '../../assets/images/profile.png';
 
@@ -31,6 +31,17 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const { id } = useParams();
     const jobId = job?.id || id;
     const { data, isLoading, isError } = useDashboardJobDetailsQuery(jobId);
+    console.log(data)
+    const { data: flagsList } = useDashboardInboxFlagsListQuery();
+    const navigate = useNavigate();
+
+    const statusOptions = useMemo(() => {
+        if (!flagsList || typeof flagsList !== 'object') {
+            return [];
+        }
+
+        return Object.entries(flagsList).map(([key, label]) => ({ key, label }));
+    }, [flagsList]);
 
     if (isLoading) {
         return <div className="flex-1 overflow-y-auto bg-[#F9FBFC] p-10 text-gray-500">Loading job details...</div>;
@@ -93,7 +104,9 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
             <div className="mx-auto p-10">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-6">
-                        <button onClick={onBack} className="p-3 bg-white border border-[#E7E7E7] rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <button onClick={() => {
+                            navigate(-1);
+                        }} className="p-3 bg-white border border-[#E7E7E7] rounded-xl shadow-sm hover:shadow-md transition-shadow">
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </button>
                         <div>
@@ -108,17 +121,17 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                         <ChevronDown className={`w-4 h-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
                                     </button>
                                     {showStatusDropdown ? (
-                                        <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-gray-200 border border-[#F1F5F9] py-2 z-20">
-                                            {['New Lead', 'Active', 'Awaiting Confirmation', 'To Follow Up', 'Inactive', 'Completed'].map((s) => (
+                                        <div className="absolute left-0 top-full z-20 mt-2 w-64 rounded-2xl border border-[#F1F5F9] bg-white py-2 shadow-xl shadow-gray-200 sm:w-56">
+                                            {statusOptions.map((statusOption) => (
                                                 <button
-                                                    key={s}
+                                                    key={statusOption.key}
                                                     onClick={() => {
-                                                        if (onStatusChange) onStatusChange(s);
+                                                        if (onStatusChange) onStatusChange(statusOption.label);
                                                         setShowStatusDropdown(false);
                                                     }}
                                                     className="w-full text-left px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F8FAFC] text-[#4B5563]"
                                                 >
-                                                    {s}
+                                                    {statusOption.label}
                                                 </button>
                                             ))}
                                         </div>

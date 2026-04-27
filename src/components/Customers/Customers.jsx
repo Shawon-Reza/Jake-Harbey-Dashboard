@@ -16,7 +16,7 @@ export default function Customers() {
     }, [data]);
 
     return (
-        <div className="flex-1 overflow-y-auto bg-white p-12">
+        <div className="flex-1 overflow-y-auto bg-white px-10 py-5">
             <div className="mx-auto">
                 <h1 className="text-4xl font-medium text-[#2A2A2A] mb-8">Customers</h1>
 
