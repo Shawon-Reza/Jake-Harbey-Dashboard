@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Check, ChevronDown, PenTool } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, CreditCard, PenTool, SendHorizonal } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDashboardInboxFlagsListQuery, useDashboardJobDetailsQuery } from '../../Api/dashboardApi';
+import { toast } from 'sonner';
+import {
+    useAddDashboardInboxFlagMutation,
+    useDashboardInboxFlagsListQuery,
+    useDashboardJobDetailsQuery,
+} from '../../Api/dashboardApi';
 import { base_URL } from '../../Api/config';
 import profile from '../../assets/images/profile.png';
 import AssignTechnician from '../Jobs/AssignTechnician';
@@ -49,6 +54,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const jobId = job?.id || id;
     const { data, isLoading, isError } = useDashboardJobDetailsQuery(jobId);
     const { data: flagsList } = useDashboardInboxFlagsListQuery();
+    const { mutateAsync: addInboxFlag, isPending: isAddingFlag } = useAddDashboardInboxFlagMutation();
     const navigate = useNavigate();
 
     const statusOptions = useMemo(() => {
@@ -80,6 +86,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const currentProgressValue = typeof data.job_progress === 'string' ? data.job_progress : null;
     const currentProgressIndex = PROGRESS_STEPS.findIndex((step) => step.value === currentProgressValue);
     const progress = currentProgressIndex >= 0 ? currentProgressIndex + 1 : 0;
+    const progressLabel = currentProgressValue ? JOB_PROGRESS_LABELS[currentProgressValue] || currentProgressValue : 'Unknown';
     const technician = data.technician_info || null;
     const assignedTo = technician?.full_name ? technician.full_name : 'No Technician is assigned to this job.';
     const technicianProfileSrc = toImageSrc(technician?.profile_picture) || profile;
@@ -106,77 +113,127 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
         { label: 'Deposit', value: toCurrency(data.deposit), status: depositStatus },
     ];
 
+    const handleAddFlag = async (flag) => {
+        if (!jobId) {
+            toast.error('Missing job id for this action.');
+            return;
+        }
+
+        try {
+            await addInboxFlag({ jobId, flag });
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to update the job flag.';
+            toast.error(message);
+        }
+    };
+
+    const flagButtons = [
+        { label: 'Mark to Follow Up', value: 'to_follow_up', icon: SendHorizonal },
+        { label: 'Flag Attention', value: 'flag_attention', icon: CreditCard },
+    ];
+
     return (
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
             <div className="mx-auto p-10">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-6">
-                        <button
-                            onClick={() => navigate(-1)}
-                            className="p-3 bg-white border border-[#E7E7E7] rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <ArrowLeft className="w-5 h-5 text-gray-600" />
-                        </button>
-                        <div>
-                            <div className="flex items-center gap-4 mb-2">
-                                <h1 className="text-3xl font-medium text-[#2A2A2A]">Job # {toDisplay(data.id)}</h1>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                                        className="px-5 py-1.5 rounded-full text-sm flex items-center gap-2 transition-colors bg-gray-100 text-gray-700"
-                                    >
-                                        Available Flags
-                                        <ChevronDown className={`w-4 h-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
-                                    </button>
-                                    {showStatusDropdown ? (
-                                        <div className="absolute left-0 top-full z-20 mt-2 w-64 rounded-2xl border border-[#F1F5F9] bg-white py-2 shadow-xl shadow-gray-200 sm:w-56">
-                                            {statusOptions.map((statusOption) => (
-                                                <button
-                                                    key={statusOption.key}
-                                                    onClick={() => {
-                                                        if (onStatusChange) onStatusChange(statusOption.label);
-                                                        setShowStatusDropdown(false);
-                                                    }}
-                                                    className={`flex w-full items-center justify-between px-5 py-3 text-left text-sm font-semibold transition-colors hover:bg-[#F8FAFC] ${selectedFlags.includes(statusOption.key) ? 'bg-[#F0FDF4] text-[#166534]' : 'text-[#4B5563]'
-                                                        }`}
-                                                >
-                                                    {statusOption.label}
-                                                    {selectedFlags.includes(statusOption.key) ? (
-                                                        <span className="ml-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#22C55E] text-[11px] text-white">
-                                                            ✓
-                                                        </span>
-                                                    ) : null}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    ) : null}
+                <div className="mb-6 rounded-2xl border border-[#E7E7E7] bg-white px-4 py-4 shadow-sm sm:px-5 sm:py-4">
+                    <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                        <div className="flex items-start gap-4 sm:items-center">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#E7E7E7] bg-white text-gray-600 shadow-sm transition-all hover:shadow-md"
+                            >
+                                <ArrowLeft className="h-5 w-5" />
+                            </button>
+
+                            <div className="min-w-0">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <h1 className="text-2xl font-semibold text-[#111827] sm:text-[28px]">Job # {toDisplay(data.id)}</h1>
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                                            className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                                        >
+                                            {toDisplay(progressLabel)}
+                                            <ChevronDown className={`h-4 w-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
+                                        </button>
+                                        {showStatusDropdown ? (
+                                            <div className="absolute left-0 top-full z-20 mt-2 w-64 rounded-2xl border border-[#F1F5F9] bg-white py-2 shadow-xl shadow-gray-200 sm:w-56">
+                                                {statusOptions.map((statusOption) => (
+                                                    <button
+                                                        key={statusOption.key}
+                                                        onClick={() => {
+                                                            if (onStatusChange) onStatusChange(statusOption.label);
+                                                            setShowStatusDropdown(false);
+                                                        }}
+                                                        className={`flex w-full items-center justify-between px-5 py-3 text-left text-sm font-semibold transition-colors hover:bg-[#F8FAFC] ${selectedFlags.includes(statusOption.key) ? 'bg-[#F0FDF4] text-[#166534]' : 'text-[#4B5563]'
+                                                            }`}
+                                                    >
+                                                        {statusOption.label}
+                                                        {selectedFlags.includes(statusOption.key) ? (
+                                                            <span className="ml-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#22C55E] text-[11px] text-white">
+                                                                ✓
+                                                            </span>
+                                                        ) : null}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </div>
+
+                                <p className="mt-1 text-sm text-[#6B7280]">
+                                    Submitted on <span className="font-medium text-[#4B5563]">{toDisplay(data.scheduled_date_and_time)}</span>
+                                </p>
                             </div>
-                            <p className="text-sm text-[#6B7280] font-medium">Scheduled on {toDisplay(data.scheduled_date_and_time)}</p>
+                        </div>
+
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                            {flagButtons.map((button) => {
+                                const Icon = button.icon;
+                                const isSelected = selectedFlags.includes(button.value);
+
+                                return (
+                                    <button
+                                        key={button.value}
+                                        type="button"
+                                        disabled={isAddingFlag}
+                                        onClick={() => handleAddFlag(button.value)}
+                                        className={`inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
+                                            isSelected
+                                                ? 'border-[#C7F0D4] bg-[#F0FDF4] text-[#166534]'
+                                                : 'border-[#D8E0F6] bg-white text-[#344054] hover:border-[#B8C7F5] hover:bg-[#F8FAFF]'
+                                        }`}
+                                    >
+                                        <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${isSelected ? 'bg-[#DCFCE7] text-[#16A34A]' : 'bg-[#EEF2FF] text-[#4F46E5]'}`}>
+                                            <Icon className="h-3.5 w-3.5" />
+                                        </span>
+                                        {button.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex items-center gap-3 rounded-2xl border border-[#E7E7E7] bg-white px-4 py-3 shadow-sm">
+                            {technician ? (
+                                <img
+                                    src={technicianProfileSrc}
+                                    alt={technician?.full_name || 'Technician'}
+                                    className="h-11 w-11 rounded-full border-2 border-[#E7E7E7] object-cover"
+                                    onError={(event) => {
+                                        event.currentTarget.src = profile;
+                                    }}
+                                />
+                            ) : null}
+                            <div className="leading-tight">
+                                <div className={technician ? 'text-sm text-[#6B7280]' : 'sr-only'}>Assigned to</div>
+                                <div className="max-w-[240px] text-base font-medium text-[#374151]">{assignedTo}</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 px-6 py-3 bg-white border border-[#E7E7E7] rounded-2xl shadow-sm">
-                        {technician ? (
-                            <img
-                                src={technicianProfileSrc}
-                                alt={technician?.full_name || 'Technician'}
-                                className="w-10 h-10 rounded-full border-2 border-[#E7E7E7] object-cover"
-                                onError={(event) => {
-                                    event.currentTarget.src = profile;
-                                }}
-                            />
-                        ) : null}
-                        <div className="flex items-center gap-2">
-                            <span className={technician ? "text-[#4B5563] text-lg" : "hidden"}>
-                                Assigned to
-                            </span>
-                            <span className="text-[#4B5563] text-lg">{assignedTo}</span>
-                        </div>
-                    </div>
                 </div>
 
-                <div className="bg-white rounded-[32px] p-10 border border-[#E7E7E7] shadow-sm mb-10 overflow-hidden relative">
+                <div className="bg-white rounded-[32px] p-10 border border-[#E7E7E7] shadow-sm mb-10 overflow-hidden relative mt-4">
                     <h3 className="text-xl font-bold text-[#454545] mb-12">Job Progress</h3>
                     <div className="relative flex justify-between px-0">
                         <div className="absolute top-[24px] left-6 right-6 h-1 z-0">

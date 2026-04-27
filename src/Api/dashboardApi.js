@@ -148,6 +148,26 @@ export const useAssignDashboardTechnicianMutation = () => {
   });
 };
 
+export const useAddDashboardInboxFlagMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jobId, flag }) => {
+      const response = await axiosApi.post(`/dashboard/inbox/flags/${jobId}/`,
+        {
+          flag,
+        },
+      );
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_INBOX_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_JOBS_QUERY_KEY });
+    },
+  });
+};
+
 export const useDashboardCustomerDetailsQuery = (userId) => {
   return useQuery({
     queryKey: [...DASHBOARD_CUSTOMER_DETAILS_QUERY_KEY, userId],
