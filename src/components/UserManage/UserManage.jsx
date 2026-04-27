@@ -138,19 +138,21 @@ export default function UserManage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#f8fafc] p-4 md:p-6 lg:p-8">
-      <div className="mx-auto  space-y-5">
+    <div className="min-h-[calc(100vh-64px)] bg-[#f8fafc] p-3 sm:p-4 md:p-6 lg:p-8">
+      <div className="mx-auto space-y-4 sm:space-y-5">
         {/* Header Section */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-3xl font-medium text-slate-800">User Management</h1>
+          <h1 className="text-2xl font-medium text-slate-800 sm:text-3xl">
+            User Management
+          </h1>
           
-          <div className="relative w-full max-w-[320px]">
+          <div className="relative w-full max-w-none md:max-w-[360px]">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="h-4 w-4 text-slate-400" />
             </div>
             <input
               type="text"
-              className="block w-full rounded-xl border-0 bg-slate-100 py-2.5 pl-9 pr-4 text-sm text-slate-700 placeholder-slate-400 ring-1 ring-inset ring-slate-100 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-blue-500 outline-none transition-all"
+              className="block w-full rounded-xl border-0 bg-slate-100 py-2.5 pl-9 pr-4 text-sm text-slate-700 placeholder-slate-400 ring-1 ring-inset ring-slate-100 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-inset focus:ring-blue-500"
               placeholder="Search by name, email, location, or role..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -159,7 +161,7 @@ export default function UserManage() {
         </div>
 
         {/* Metric Cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <UserManageStatsCard
             title="Total Users"
             value={safeStats.total_users ?? 'N/A'}
@@ -182,9 +184,11 @@ export default function UserManage() {
         </div>
 
         {/* Table Section */}
-        <div className="rounded-[20px] border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <div className="p-6 pb-4 border-b border-slate-100/50">
-            <h2 className="text-[18px] font-semibold text-slate-800">All Users ({filteredUsers.length})</h2>
+        <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-100/50 p-4 sm:p-6 pb-4 sm:pb-4">
+            <h2 className="text-[16px] font-semibold text-slate-800 sm:text-[18px]">
+              All Users ({filteredUsers.length})
+            </h2>
           </div>
 
           <UserManageTable
