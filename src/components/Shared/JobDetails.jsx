@@ -59,6 +59,8 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
         return Object.entries(flagsList).map(([key, label]) => ({ key, label }));
     }, [flagsList]);
 
+    const selectedFlags = Array.isArray(data?.flags) ? data.flags : [];
+
     if (isLoading) {
         return <div className="flex-1 overflow-y-auto bg-[#F9FBFC] p-10 text-gray-500">Loading job details...</div>;
     }
@@ -78,10 +80,9 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const currentProgressValue = typeof data.job_progress === 'string' ? data.job_progress : null;
     const currentProgressIndex = PROGRESS_STEPS.findIndex((step) => step.value === currentProgressValue);
     const progress = currentProgressIndex >= 0 ? currentProgressIndex + 1 : 0;
-    const progressLabel = currentProgressValue ? JOB_PROGRESS_LABELS[currentProgressValue] || currentProgressValue : 'Unknown';
-    const technician = data.technician_info || {};
-    const assignedTo = toDisplay(technician.full_name || 'Unassigned');
-    const technicianProfileSrc = toImageSrc(technician.profile_picture) || profile;
+    const technician = data.technician_info || null;
+    const assignedTo = technician?.full_name ? technician.full_name : 'No Technician is assigned to this job.';
+    const technicianProfileSrc = toImageSrc(technician?.profile_picture) || profile;
 
     const infoRows = [
         { label: 'Name', value: owner.full_name },
@@ -124,7 +125,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                         onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                                         className="px-5 py-1.5 rounded-full text-sm flex items-center gap-2 transition-colors bg-gray-100 text-gray-700"
                                     >
-                                        {toDisplay(progressLabel)}
+                                        Available Flags
                                         <ChevronDown className={`w-4 h-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
                                     </button>
                                     {showStatusDropdown ? (
@@ -136,9 +137,15 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                                         if (onStatusChange) onStatusChange(statusOption.label);
                                                         setShowStatusDropdown(false);
                                                     }}
-                                                    className="w-full text-left px-5 py-3 text-sm font-semibold transition-colors hover:bg-[#F8FAFC] text-[#4B5563]"
+                                                    className={`flex w-full items-center justify-between px-5 py-3 text-left text-sm font-semibold transition-colors hover:bg-[#F8FAFC] ${selectedFlags.includes(statusOption.key) ? 'bg-[#F0FDF4] text-[#166534]' : 'text-[#4B5563]'
+                                                        }`}
                                                 >
                                                     {statusOption.label}
+                                                    {selectedFlags.includes(statusOption.key) ? (
+                                                        <span className="ml-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#22C55E] text-[11px] text-white">
+                                                            ✓
+                                                        </span>
+                                                    ) : null}
                                                 </button>
                                             ))}
                                         </div>
@@ -150,16 +157,20 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                     </div>
 
                     <div className="flex items-center gap-4 px-6 py-3 bg-white border border-[#E7E7E7] rounded-2xl shadow-sm">
-                        <img
-                            src={technicianProfileSrc}
-                            alt={technician.full_name || 'Technician'}
-                            className="w-10 h-10 rounded-full border-2 border-[#E7E7E7] object-cover"
-                            onError={(event) => {
-                                event.currentTarget.src = profile;
-                            }}
-                        />
+                        {technician ? (
+                            <img
+                                src={technicianProfileSrc}
+                                alt={technician?.full_name || 'Technician'}
+                                className="w-10 h-10 rounded-full border-2 border-[#E7E7E7] object-cover"
+                                onError={(event) => {
+                                    event.currentTarget.src = profile;
+                                }}
+                            />
+                        ) : null}
                         <div className="flex items-center gap-2">
-                            <span className="text-[#4B5563] text-lg">Assigned to</span>
+                            <span className={technician ? "text-[#4B5563] text-lg" : "hidden"}>
+                                Assigned to
+                            </span>
                             <span className="text-[#4B5563] text-lg">{assignedTo}</span>
                         </div>
                     </div>
