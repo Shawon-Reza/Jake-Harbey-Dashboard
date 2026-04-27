@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, Check, ChevronDown, Clock, PenTool } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, PenTool } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDashboardInboxFlagsListQuery, useDashboardJobDetailsQuery } from '../../Api/dashboardApi';
 import { base_URL } from '../../Api/config';
@@ -27,14 +27,27 @@ const toImageSrc = (value) => {
     return `${base_URL}${value}`;
 };
 
+const PROGRESS_STEPS = [
+    { id: 1, value: 'price_confirmed', label: 'Price Confirmed' },
+    { id: 2, value: 'deposit_paid', label: 'Deposit Paid' },
+    { id: 3, value: 'technician_accepted', label: 'Technician Accepted' },
+    { id: 4, value: 'technician_declined', label: 'Technician Declined' },
+    { id: 5, value: 'datetime_confirmed', label: 'Date & Time Confirmed' },
+    { id: 6, value: 'signed_off', label: 'Signed-Off' },
+    { id: 7, value: 'balance_paid', label: 'Balance Paid' },
+    { id: 8, value: 'completed', label: 'Completed' },
+];
+
+const JOB_PROGRESS_LABELS = PROGRESS_STEPS.reduce((accumulator, step) => {
+    accumulator[step.value] = step.label;
+    return accumulator;
+}, {});
+
 const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const [showStatusDropdown, setShowStatusDropdown] = useState(false);
     const { id } = useParams();
-
-
     const jobId = job?.id || id;
     const { data, isLoading, isError } = useDashboardJobDetailsQuery(jobId);
-    console.log(data)
     const { data: flagsList } = useDashboardInboxFlagsListQuery();
     const navigate = useNavigate();
 
@@ -62,12 +75,13 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
     const vehicle = data.vehicle_info || {};
     const damage = data.damage_info || {};
     const vehicleImages = Array.isArray(vehicle.images) ? vehicle.images : [];
-    const status = data.job_progress || job?.status_badge || 'Unknown';
-    const progress = typeof job?.progress_percentage === 'number'
-        ? Math.max(0, Math.min(7, Math.round(job.progress_percentage / (100 / 7))))
-        : 0;
-    const assignedTo = toDisplay(job?.technician_name || data.technician_accept_state || 'Unassigned');
-    const profileSrc = toImageSrc(owner.profile_picture) || profile;
+    const currentProgressValue = typeof data.job_progress === 'string' ? data.job_progress : null;
+    const currentProgressIndex = PROGRESS_STEPS.findIndex((step) => step.value === currentProgressValue);
+    const progress = currentProgressIndex >= 0 ? currentProgressIndex + 1 : 0;
+    const progressLabel = currentProgressValue ? JOB_PROGRESS_LABELS[currentProgressValue] || currentProgressValue : 'Unknown';
+    const technician = data.technician_info || {};
+    const assignedTo = toDisplay(technician.full_name || 'Unassigned');
+    const technicianProfileSrc = toImageSrc(technician.profile_picture) || profile;
 
     const infoRows = [
         { label: 'Name', value: owner.full_name },
@@ -83,8 +97,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
         { label: 'Reg', value: vehicle.registration_number },
     ];
 
-    const depositStatus =
-        typeof data.deposit_paid === 'boolean' ? (data.deposit_paid ? 'Paid' : 'Pending') : 'N/A';
+    const depositStatus = typeof data.deposit_paid === 'boolean' ? (data.deposit_paid ? 'Paid' : 'Pending') : 'N/A';
 
     const pricingRows = [
         { label: 'Estimated Cost', value: toCurrency(data.estimated_cost) },
@@ -92,24 +105,15 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
         { label: 'Deposit', value: toCurrency(data.deposit), status: depositStatus },
     ];
 
-    const PROGRESS_STEPS = [
-        { id: 1, label: 'Price Confirmed' },
-        { id: 2, label: 'Technician Accepted' },
-        { id: 3, label: 'Date & Time Confirmed' },
-        { id: 4, label: 'Deposit Paid' },
-        { id: 5, label: 'Signed-Off' },
-        { id: 6, label: 'Balance Paid' },
-        { id: 7, label: 'Completed' },
-    ];
-
     return (
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
             <div className="mx-auto p-10">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-6">
-                        <button onClick={() => {
-                            navigate(-1);
-                        }} className="p-3 bg-white border border-[#E7E7E7] rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="p-3 bg-white border border-[#E7E7E7] rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                        >
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </button>
                         <div>
@@ -120,7 +124,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                         onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                                         className="px-5 py-1.5 rounded-full text-sm flex items-center gap-2 transition-colors bg-gray-100 text-gray-700"
                                     >
-                                        {toDisplay(status)}
+                                        {toDisplay(progressLabel)}
                                         <ChevronDown className={`w-4 h-4 transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
                                     </button>
                                     {showStatusDropdown ? (
@@ -147,8 +151,8 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
 
                     <div className="flex items-center gap-4 px-6 py-3 bg-white border border-[#E7E7E7] rounded-2xl shadow-sm">
                         <img
-                            src={profileSrc}
-                            alt={owner.full_name || 'Owner'}
+                            src={technicianProfileSrc}
+                            alt={technician.full_name || 'Technician'}
                             className="w-10 h-10 rounded-full border-2 border-[#E7E7E7] object-cover"
                             onError={(event) => {
                                 event.currentTarget.src = profile;
@@ -167,21 +171,34 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                         <div className="absolute top-[24px] left-6 right-6 h-1 z-0">
                             <div className="absolute inset-0 bg-[#22C55E]/10"></div>
                             <div
-                                className="h-full bg-[#22C55E] transition-all duration-500"
+                                className={`h-full transition-all duration-500 ${currentProgressValue === 'technician_declined' ? 'bg-red-500' : 'bg-[#22C55E]'}`}
                                 style={{ width: progress > 0 ? `${((progress - 1) / (PROGRESS_STEPS.length - 1)) * 100}%` : '0%' }}
                             ></div>
                         </div>
                         {PROGRESS_STEPS.map((step, idx) => {
-                            const isCompleted = step.id <= progress;
+                            const isCompleted = idx < progress;
+                            const isCurrent = step.value === currentProgressValue;
+                            const isDeclined = step.value === 'technician_declined' && isCurrent;
+                            const nodeClassName = isDeclined
+                                ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-100'
+                                : isCompleted
+                                    ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-lg shadow-green-100'
+                                    : 'bg-white border-[#22C55E] text-[#22C55E]';
+                            const labelClassName = isDeclined
+                                ? 'text-red-500'
+                                : isCompleted
+                                    ? 'text-[#22C55E]'
+                                    : 'text-[#6B7280]';
+
                             return (
-                                <div key={idx} className="relative z-10 flex flex-col items-center">
+                                <div key={step.value} className="relative z-10 flex flex-col items-center">
                                     <div
                                         onClick={() => onUpdateProgress && onUpdateProgress(step.id)}
-                                        className={`w-12 h-12 rounded-full flex items-center justify-center border-2 text-lg transition-all duration-500 ${onUpdateProgress ? 'cursor-pointer hover:scale-110 active:scale-95' : ''} ${isCompleted ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-lg shadow-green-100' : 'bg-white border-[#22C55E] text-[#22C55E]'}`}
+                                        className={`w-12 h-12 rounded-full flex items-center justify-center border-2 text-lg transition-all duration-500 ${onUpdateProgress ? 'cursor-pointer hover:scale-110 active:scale-95' : ''} ${nodeClassName}`}
                                     >
                                         {isCompleted ? <Check size={20} /> : step.id}
                                     </div>
-                                    <p className={`mt-4 text-[13px] font-semibold max-w-[100px] text-center leading-tight mb-1 transition-all duration-300 ${isCompleted ? 'text-[#22C55E]' : 'text-[#6B7280]'}`}>
+                                    <p className={`mt-4 text-[13px] font-semibold max-w-[100px] text-center leading-tight mb-1 transition-all duration-300 ${labelClassName}`}>
                                         {step.label}
                                     </p>
                                 </div>
@@ -190,7 +207,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                     </div>
                 </div>
 
-                <div className='grid grid-cols-12 gap-6'>
+                <div className="xl:grid grid-cols-12 gap-6">
                     <div className="col-span-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                             <div className="bg-white rounded-2xl p-6 border border-[#E7E7E7] shadow-sm">
@@ -199,7 +216,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                     {infoRows.map((detail) => (
                                         <div key={detail.label} className="flex pb-4">
                                             <span className="w-28 text-gray-400">{detail.label}</span>
-                                            <span className="text-[#454545] flex-1">: {toDisplay(detail.value)}</span>
+                                            <span className="text-[#454545] flex-1 overflow-hidden">: {toDisplay(detail.value)}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -220,7 +237,12 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                 {vehicleImages.length ? (
                                     <div className="grid grid-cols-2 gap-4">
                                         {vehicleImages.map((image) => (
-                                            <img key={image.id} src={toImageSrc(image.image)} alt="Vehicle" className="w-full h-32 rounded-xl object-cover border border-[#E7E7E7]" />
+                                            <img
+                                                key={image.id}
+                                                src={toImageSrc(image.image)}
+                                                alt="Vehicle"
+                                                className="w-full h-32 rounded-xl object-cover border border-[#E7E7E7]"
+                                            />
                                         ))}
                                     </div>
                                 ) : (
@@ -240,7 +262,9 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                                             <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${p.status === 'Paid' ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-[#FEF3C7] text-[#D97706]'}`}>
                                                 {p.status}
                                             </span>
-                                        ) : <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-500">N/A</span>}
+                                        ) : (
+                                            <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-500">N/A</span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -252,10 +276,8 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange }) => {
                         </div>
                     </div>
 
-
-
-                    <div className='col-span-4 h-full'>
-                        <AssignTechnician />
+                    <div className="col-span-4 h-full mt-5 xl:mt-0">
+                        <AssignTechnician jobId={jobId} />
                     </div>
                 </div>
 

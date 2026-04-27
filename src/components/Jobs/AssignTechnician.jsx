@@ -1,10 +1,15 @@
 import React, { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { MapPin, BriefcaseBusiness, CheckCircle2, CircleUserRound } from 'lucide-react';
-import { useDashboardTechniciansQuery } from '../../Api/dashboardApi';
+import {
+  useAssignDashboardTechnicianMutation,
+  useDashboardTechniciansQuery,
+} from '../../Api/dashboardApi';
 
-const AssignTechnician = () => {
+const AssignTechnician = ({ jobId }) => {
   const [assignedTechnicianId, setAssignedTechnicianId] = useState(null);
   const { data, isLoading, isError } = useDashboardTechniciansQuery();
+  const { mutateAsync: assignTechnician, isPending } = useAssignDashboardTechnicianMutation();
 
   const technicians = useMemo(() => {
     if (!data) {
@@ -22,8 +27,20 @@ const AssignTechnician = () => {
     return [];
   }, [data]);
 
-  const handleAssign = (technicianId) => {
-    setAssignedTechnicianId(technicianId);
+  const handleAssign = async (technician) => {
+    if (!jobId) {
+      toast.error('Job id was not provided.');
+      return;
+    }
+
+    try {
+      await assignTechnician({ jobId, technicianId: technician.id });
+      setAssignedTechnicianId(technician.id);
+      toast.success(`${technician.full_name} has been assigned to this job.`);
+    } catch (error) {
+      const message = error?.response?.data?.message || 'Unable to assign technician right now.';
+      toast.error(message);
+    }
   };
 
   if (isLoading) {
@@ -110,14 +127,15 @@ const AssignTechnician = () => {
               <div className="flex items-center justify-end md:shrink-0">
                 <button
                   type="button"
-                  onClick={() => handleAssign(technician.id)}
+                  onClick={() => handleAssign(technician)}
+                  disabled={isPending}
                   className={`inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-all sm:h-11 sm:px-5 ${
                     isAssigned
                       ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                      : 'border border-[#CBD5E1] bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                      : 'border border-[#CBD5E1] bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60'
                   }`}
                 >
-                  {isAssigned ? 'Assigned' : 'Assign'}
+                  {isAssigned ? 'Assigned' : isPending ? 'Assigning...' : 'Assign'}
                 </button>
               </div>
             </div>
