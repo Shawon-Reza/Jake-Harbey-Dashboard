@@ -7,6 +7,7 @@ import {
     useDashboardInboxFlagsListQuery,
     useDashboardJobDetailsQuery,
     useUpdateDashboardInboxDepositPriceMutation,
+    useRequestDashboardInboxDepositMutation,
     useUpdateDashboardInboxTotalPriceMutation,
 } from '../../Api/dashboardApi';
 import { base_URL } from '../../Api/config';
@@ -39,6 +40,11 @@ const parseAmount = (value) => {
 const toBooleanDisplay = (value) => {
     if (typeof value !== 'boolean') return 'N/A';
     return value ? 'Yes' : 'No';
+};
+
+const toPaidPendingDisplay = (value) => {
+    if (typeof value !== 'boolean') return 'N/A';
+    return value ? 'Paid' : 'Pending';
 };
 
 const toImageSrc = (value) => {
@@ -77,6 +83,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
     const { mutateAsync: addInboxFlag, isPending: isAddingFlag } = useAddDashboardInboxFlagMutation();
     const { mutateAsync: updateTotalPrice, isPending: isUpdatingTotalPrice } = useUpdateDashboardInboxTotalPriceMutation();
     const { mutateAsync: updateDepositPrice, isPending: isUpdatingDepositPrice } = useUpdateDashboardInboxDepositPriceMutation();
+    const { mutateAsync: requestDeposit, isPending: isRequestingDeposit } = useRequestDashboardInboxDepositMutation();
     const navigate = useNavigate();
 
     const statusOptions = useMemo(() => {
@@ -141,6 +148,9 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
     const totalCostValue = parseAmount(pricingDraft.totalCost);
     const depositValue = parseAmount(pricingDraft.deposit);
     const availableValue = totalCostValue !== null && depositValue !== null ? totalCostValue - depositValue : null;
+    const depositStatusText = toPaidPendingDisplay(data.deposit_paid);
+    const balanceStatusText = toPaidPendingDisplay(data.balance_paid);
+    const isPricingLocked = Boolean(data.deposit_requested);
 
     const handlePricingToggle = async (field) => {
         if (activePricingField === field) {
@@ -174,7 +184,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                 setActivePricingField(null);
             } catch (error) {
                 const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to update pricing.';
-                toast.error(message,{
+                toast.error(message, {
                     position: 'top-right',
                 });
             }
@@ -186,14 +196,37 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
 
     const isSavingPricing = isUpdatingTotalPrice || isUpdatingDepositPrice;
 
-    const renderPricingValue = (field, value) => {
-        const isEditing = activePricingField === field;
+    const handleRequestDeposit = async () => {
+        if (!jobId) {
+            toast.error('Missing job id for this action.');
+            return;
+        }
+
+        try {
+            await requestDeposit({ jobId });
+            toast.success('Deposit request sent successfully.');
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to send deposit request.';
+            toast.error(message, {
+                position: 'top-right',
+            });
+        }
+    };
+
+    const renderPricingValue = (field, value, statusValue) => {
+        const isEditing = activePricingField === field && !isPricingLocked;
+        const hasStatus = field === 'deposit' || field === 'available';
+        const statusClassName = statusValue === 'Paid'
+            ? 'bg-[#E8F5E9] text-[#2E7D32]'
+            : statusValue === 'Pending'
+                ? 'bg-[#FEF3C7] text-[#D97706]'
+                : 'bg-gray-100 text-gray-500';
 
         return (
             <div className="rounded-[24px] border border-[#E7E7E7] bg-[#F8FAFD] p-5 shadow-sm sm:p-6">
                 <div className="mb-4 flex items-start justify-between gap-3">
                     <p className="text-sm font-medium text-[#6B7280] sm:text-[15px]">{field === 'totalCost' ? 'Total Price' : field === 'deposit' ? 'Deposit' : 'Balance'}</p>
-                    {field !== 'available' ? (
+                    {field !== 'available' && !isPricingLocked ? (
                         <button
                             type="button"
                             onClick={() => handlePricingToggle(field)}
@@ -231,12 +264,12 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                     <p className="text-2xl font-semibold text-[#111827] sm:text-[34px]">{value}</p>
                 )}
 
-                {field === 'available' ? (
-                    <span className={`mt-4 inline-flex rounded-lg px-3 py-1.5 text-sm font-medium ${availableValue !== null && availableValue >= 0 ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'bg-gray-100 text-gray-500'}`}>
-                        {availableValue === null ? 'N/A' : availableValue >= 0 ? 'Available' : 'Needs review'}
+                {hasStatus ? (
+                    <span className={`mt-4 inline-flex rounded-lg px-3 py-1.5 text-sm font-medium ${statusClassName}`}>
+                        {statusValue}
                     </span>
                 ) : (
-                    <p className="mt-4 text-sm text-[#6B7280]">Click the icon to edit, then click check to confirm.</p>
+                    <p className="mt-4 text-sm text-[#6B7280]">{isPricingLocked ? 'Editing is disabled for this job.' : 'Click the icon to edit, then click check to confirm.'}</p>
                 )}
             </div>
         );
@@ -263,7 +296,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
 
     return (
         <div className="bg-[#F9FBFC]">
-            <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+            <div className="mx-auto w-full  px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
                 <div className="mb-6 rounded-2xl border border-[#E7E7E7] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex items-start gap-4 sm:items-center">
@@ -349,7 +382,7 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
 
                                 type="button"
                                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#89A8F8] px-5 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#7898F7] hover:shadow-md active:scale-[0.99] xl:w-auto"
-                                // disabled={isSavingPricing}
+                            // disabled={isSavingPricing}
                             >
                                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-white">
                                     <SendHorizonal className="h-3.5 w-3.5" />
@@ -360,17 +393,18 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                             <button
                                 type="button"
                                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#76C887] px-5 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#68BC79] hover:shadow-md active:scale-[0.99] xl:w-auto"
-                                disabled={isSavingPricing}
+                                onClick={handleRequestDeposit}
+                                disabled={isSavingPricing || isRequestingDeposit}
                             >
                                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-white">
                                     <CreditCard className="h-3.5 w-3.5" />
                                 </span>
-                                Send Deposit Request
+                                {isRequestingDeposit ? 'Sending Deposit Request...' : 'Send Deposit Request'}
                             </button>
                         </div>
 
                         <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:min-w-[280px] xl:max-w-[340px]">
-                            <div className="flex items-center gap-3">
+                            <div className="flex min-w-0 flex-1 items-center gap-3">
                                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full ring-4 ring-[#EEF2FF]">
                                     <img
                                         src={technicianProfileSrc}
@@ -381,9 +415,9 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                                         }}
                                     />
                                 </div>
-                                <div className="min-w-0">
+                                <div className="min-w-0 flex-1">
                                     <div className="text-sm text-[#6B7280]">Assigned to</div>
-                                    <div className="truncate text-lg font-medium text-[#374151]">{assignedTo}</div>
+                                    <div className="truncate text-base font-medium text-[#374151] sm:text-lg">{assignedTo}</div>
                                 </div>
                             </div>
                         </div>
@@ -483,15 +517,15 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                             <h3 className="mb-6 text-lg font-bold text-[#454545] sm:mb-10 sm:text-xl">Pricing & Payments</h3>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
                                 {renderPricingValue('totalCost', totalCostValue === null ? 'N/A' : toCurrency(totalCostValue))}
-                                {renderPricingValue('deposit', depositValue === null ? 'N/A' : toCurrency(depositValue))}
-                                {renderPricingValue('available', availableValue === null ? 'N/A' : toCurrency(availableValue))}
+                                {renderPricingValue('deposit', depositValue === null ? 'N/A' : toCurrency(depositValue), depositStatusText)}
+                                {renderPricingValue('available', availableValue === null ? 'N/A' : toCurrency(availableValue), balanceStatusText)}
                             </div>
                             <div className="mt-5 grid grid-cols-1 gap-3 text-sm sm:mt-6 sm:gap-6 md:grid-cols-3">
-                                <div className="text-[#454545]">Total Cost Paid: <span className="font-medium">{toBooleanDisplay(data.total_cost_paid)}</span></div>
+                                <div className="text-[#454545]">Total Cost Paid: <span className="font-medium">{toPaidPendingDisplay(data.total_cost_paid)}</span></div>
 
-                                <div className="text-[#454545]">Balance Paid: <span className="font-medium">{toBooleanDisplay(data.balance_paid)}</span></div>
+                                <div className="text-[#454545]">Balance Paid: <span className="font-medium">{balanceStatusText}</span></div>
 
-                                <div className="text-[#454545]">Deposit Paid: <span className="font-medium">{toBooleanDisplay(data.deposit_paid)}</span></div>
+                                <div className="text-[#454545]">Deposit Paid: <span className="font-medium">{depositStatusText}</span></div>
                             </div>
                         </div>
                     </div>

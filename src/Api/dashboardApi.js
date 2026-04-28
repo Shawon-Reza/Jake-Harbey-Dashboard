@@ -260,6 +260,22 @@ export const useUpdateDashboardInboxDepositPriceMutation = () => {
   });
 };
 
+export const useRequestDashboardInboxDepositMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jobId }) => {
+      const response = await axiosApi.post(`/dashboard/inbox/${jobId}/request-deposit/`);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_INBOX_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_JOBS_QUERY_KEY });
+    },
+  });
+};
+
 export const useDashboardInboxFlagsListQuery = () => {
   return useQuery({
     queryKey: DASHBOARD_INBOX_FLAGS_QUERY_KEY,
