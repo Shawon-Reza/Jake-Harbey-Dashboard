@@ -224,6 +224,24 @@ export const useDashboardJobNotesQuery = (jobId) => {
   });
 };
 
+export const useCreateDashboardJobNoteMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jobId, content }) => {
+      const response = await axiosApi.post(`/dashboard/inbox/${jobId}/note/`, {
+        content,
+      });
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_NOTES_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_INBOX_QUERY_KEY });
+    },
+  });
+};
+
 export const useUpdateDashboardInboxTotalPriceMutation = () => {
   const queryClient = useQueryClient();
 
