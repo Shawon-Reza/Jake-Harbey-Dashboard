@@ -1,5 +1,5 @@
 import { ArrowLeft, Briefcase, Calendar, CheckCircle2, ChevronRight, Download, FileText, Shield } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDashboardTechnicianDetailsQuery } from "../../Api/dashboardApi";
 
 const toDisplay = (value) => {
@@ -12,8 +12,10 @@ const toImageSrc = (value) => {
     return value;
 };
 
-const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
+const TechnicianDetails = ({ tech, onSelectJob }) => {
     const { id: routeId } = useParams();
+    const navigate = useNavigate();
+
     const technicianId = tech?.user_id || tech?.id || routeId;
     const { data, isLoading, isError } = useDashboardTechnicianDetailsQuery(technicianId);
     console.log(data)
@@ -63,7 +65,9 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
             <div className="bg-[#F2F2F2] mx-auto p-12">
                 <div className="mb-10 flex items-center justify-between">
-                    <button onClick={onBack} className="group flex items-center gap-4 text-[#454545] transition-all">
+                    <button onClick={() => {
+                        navigate(-1);
+                    }} className="group flex items-center gap-4 text-[#454545] transition-all">
                         <div className="rounded-2xl border border-[#E7E7E7] bg-white p-3 shadow-sm transition-shadow group-hover:shadow-md">
                             <ArrowLeft className="h-5 w-5 text-gray-600" />
                         </div>
@@ -221,7 +225,9 @@ const TechnicianDetails = ({ tech, onBack, onSelectJob }) => {
                             return (
                                 <div
                                     key={job.job_id}
-                                    onClick={() => onSelectJob(mappedJob)}
+                                    onClick={() => {
+                                        navigate(`/jobs/${job.job_id}`);
+                                    }}
                                     className="group flex cursor-pointer items-center justify-between rounded-2xl border border-[#F3F4F6] bg-white p-6 shadow-sm transition-all hover:border-teal-200"
                                 >
                                     <div className="flex items-center gap-6">

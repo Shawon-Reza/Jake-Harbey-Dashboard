@@ -276,7 +276,7 @@ const Overview = () => {
                       <span className="text-gray-600 text-xl">{tech.jobs ?? "N/A"}</span>
                       <button
                         onClick={() =>
-                          navigate("/technicians", {
+                          navigate(`/technicians/${String(tech.id).replace("#", "")}`, {
                             state: { selectedTechnicianName: tech.name || "N/A" },
                           })
                         }

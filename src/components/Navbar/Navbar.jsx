@@ -1,14 +1,69 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Bell, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import profile from "../../assets/images/profile.png";
 import { useCurrentUserQuery } from '../../Api/authApi';
+import { connectWebSocketForNotifications } from '../../Api/socketService';
 export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
   const { data: currentUser } = useCurrentUserQuery();
 
   const userName = currentUser?.full_name || 'User';
   const userRole = currentUser?.role || 'Admin';
   const userImage = currentUser?.profile_picture || profile;
+  const notificationSocketRef = useRef(null)
+
+
+
+
+  //================================ Connect the WebSocket For Notifications ======================================\\
+  useEffect(() => {
+    const socketHandler = connectWebSocketForNotifications({
+      onMessage: (data) => {
+        console.log("socket data", data)
+        // setNotificationCount(data?.data?.total)
+
+      },
+
+      onSeen: (messageIds, seenBy) => {
+      }
+    })
+
+    if (socketHandler) {
+      notificationSocketRef.current = socketHandler
+    }
+
+    return () => {
+      if (notificationSocketRef.current?.close) {
+        notificationSocketRef.current.close()
+      }
+    }
+  }, [])
+
+  // Monitor WebSocket connection status
+  useEffect(() => {
+    const checkInterval = setInterval(() => {
+      if (notificationSocketRef.current?.getReadyState) {
+        const readyState = notificationSocketRef.current.getReadyState()
+        const stateNames = { 0: 'CONNECTING', 1: 'OPEN', 2: 'CLOSING', 3: 'CLOSED' }
+      }
+    }, 30000) // Check every 30 seconds
+
+    return () => clearInterval(checkInterval)
+  }, [])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="sticky top-0 z-50 flex  w-screen shrink-0 items-center justify-between border-b border-[#E7E7E7] bg-white px-4 py-4 md:w-full md:px-12">

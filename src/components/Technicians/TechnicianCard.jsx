@@ -26,25 +26,26 @@ const TechnicianCard = ({ tech, onSelect }) => {
     return (
         <div
             onClick={() => {
+                
                 navigate(`/technicians/${tech?.id}`);
             }}
             className="group relative cursor-pointer rounded-2xl border border-[#E7E7E7] bg-white p-6 transition-all duration-300 hover:border-b-[#1A9C9C] hover:shadow-2xl hover:shadow-gray-200/50"
         >
             <div className="mb-6 flex items-start justify-between">
                 <div className="flex items-center gap-5">
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                         <img
                             src={avatar}
                             alt={name}
-                            className="h-20 w-20 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-100"
-                            onError={(event) => {
-                                event.currentTarget.src = "https://ui-avatars.com/api/?name=NA&background=E5E7EB&color=6B7280";
+                            className="h-16 w-16  object-cover rounded-full border-2 border-white shadow-sm ring-1 ring-gray-100"
+                            onError={(e) => {
+                                e.currentTarget.src = "https://ui-avatars.com/api/?name=NA&background=E5E7EB&color=6B7280";
                             }}
                         />
-                        <div
-                            className={`absolute bottom-0 right-0 h-5 w-5 rounded-full border-4 border-white ${tech.status === "available" ? "bg-[#28A745]" : "bg-orange-400"
-                                }`}
-                        ></div>
+                        {/* Status indicator */}
+                        <div className={`absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full border-4 border-white 
+        ${tech.status === "available" ? "bg-[#28A745]" : "bg-orange-400"}`}
+                        />
                     </div>
                     <div>
                         <h3 className="mb-1 text-2xl text-[#2A2A2A] transition-colors group-hover:text-[#1A9C9C]">
