@@ -213,6 +213,20 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
         }
     };
 
+    const handleSendToTechnician = () => {
+        const notesSection = document.getElementById('notesComponents');
+
+        if (!notesSection) {
+            toast.error('Notes section not found.');
+            return;
+        }
+
+        notesSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    };
+
     const renderPricingValue = (field, value, statusValue) => {
         const isEditing = activePricingField === field && !isPricingLocked;
         const hasStatus = field === 'deposit' || field === 'available';
@@ -379,8 +393,8 @@ const JobDetails = ({ job, onBack, onUpdateProgress, onStatusChange, onPricingSa
                     <div className="mt-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:flex xl:flex-row">
                             <button
-
                                 type="button"
+                                onClick={handleSendToTechnician}
                                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#89A8F8] px-5 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#7898F7] hover:shadow-md active:scale-[0.99] xl:w-auto"
                             // disabled={isSavingPricing}
                             >

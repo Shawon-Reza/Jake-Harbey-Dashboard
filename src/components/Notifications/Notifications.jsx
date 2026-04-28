@@ -46,6 +46,7 @@ const formatNotificationTime = (createdAt) => {
 export default function Notifications() {
     const [activeTab, setActiveTab] = useState('all');
     const { data, isLoading, isError } = useNotificationsQuery();
+    console.log(data)
     const { mutateAsync: markAllNotificationsRead, isPending: isMarkingAllRead } = useMarkAllNotificationsReadMutation();
     const { mutateAsync: markNotificationRead, isPending: isMarkingRead } = useMarkNotificationReadMutation();
 
@@ -201,31 +202,31 @@ export default function Notifications() {
                 ) : (
                     <div className="divide-y divide-[#F0F0F0]">
                         {filteredNotifications.map((notification) => (
-                        <button
-                            key={notification.id}
-                            type="button"
-                            onClick={() => handleMarkAsRead(notification)}
-                            disabled={!notification.unread || isMarkingRead}
-                            className={`flex w-full items-start gap-4 px-4 py-5 text-left transition-colors sm:items-center sm:gap-6 sm:px-10 sm:py-6 disabled:cursor-default ${notification.unread ? 'cursor-pointer hover:bg-[#F4FAFD] bg-[#F9FBFC]' : 'bg-white'}`}
-                        >
-                            <div className="flex-shrink-0">
-                                {getIcon(notification.iconType)}
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-base font-medium text-[#2A2A2A] sm:text-xl">{notification.title}</h3>
-                                <p className="mt-1 text-sm text-[#666666] sm:text-base">{notification.description}</p>
-                            </div>
-
-                            <div className="flex items-center gap-4 sm:gap-6">
-                                <span className="whitespace-nowrap text-sm text-[#999999] sm:text-base">{notification.time}</span>
-                                <div className="flex items-center justify-center w-6">
-                                    {notification.unread && (
-                                        <div className="w-3 h-3 rounded-full bg-[#00B4D8] shadow-sm shadow-[#00B4D8]/30"></div>
-                                    )}
+                            <button
+                                key={notification.id}
+                                type="button"
+                                onClick={() => handleMarkAsRead(notification)}
+                                disabled={!notification.unread || isMarkingRead}
+                                className={`flex w-full items-start gap-4 px-4 py-5 text-left transition-colors sm:items-center sm:gap-6 sm:px-10 sm:py-6 disabled:cursor-default ${notification.unread ? 'cursor-pointer hover:bg-[#F4FAFD] bg-[#F9FBFC]' : 'bg-white'}`}
+                            >
+                                <div className="flex-shrink-0">
+                                    {getIcon(notification.iconType)}
                                 </div>
-                            </div>
-                        </button>
+
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-base font-medium text-[#2A2A2A] sm:text-xl">{notification.title}</h3>
+                                    <p className="mt-1 text-sm text-[#666666] sm:text-base">{notification.description}</p>
+                                </div>
+
+                                <div className="flex items-center gap-4 sm:gap-6">
+                                    <span className="whitespace-nowrap text-sm text-[#999999] sm:text-base">{notification.time}</span>
+                                    <div className="flex items-center justify-center w-6">
+                                        {notification.unread && (
+                                            <div className="w-3 h-3 rounded-full bg-[#00B4D8] shadow-sm shadow-[#00B4D8]/30"></div>
+                                        )}
+                                    </div>
+                                </div>
+                            </button>
                         ))}
                     </div>
                 )}
