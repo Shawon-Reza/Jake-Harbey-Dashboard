@@ -18,6 +18,7 @@ const makeDownloadName = (value, fallback = 'document') => {
 const TechnicianDocuments = ({ documents = [], contactDocuments = null, technicianInfoDocuments = null, technicianId = null }) => {
     const queryClient = useQueryClient();
     const contactFileInputRefs = useRef({});
+    const contactsUploadInputRef = useRef(null);
     const contactDocs = useMemo(() => {
         const source = contactDocuments ?? documents;
         return Array.isArray(source) ? source : [];
@@ -55,6 +56,10 @@ const TechnicianDocuments = ({ documents = [], contactDocuments = null, technici
 
     const openContactFilePicker = (docId) => {
         contactFileInputRefs.current?.[docId]?.click();
+    };
+
+    const openContactsUploadPicker = () => {
+        contactsUploadInputRef.current?.click();
     };
 
     const handleContactUpload = async (docType, file) => {
@@ -183,6 +188,49 @@ const TechnicianDocuments = ({ documents = [], contactDocuments = null, technici
 
             {visibleDocuments.length ? (
                 <div className="space-y-4">
+                    {activeTab === 'contacts' && contactDocs.length === 0 ? (
+                        <div className="rounded-2xl border border-dashed border-[#E5E7EB] bg-[#FAFAFB] p-4">
+                            <div className="flex flex-col gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-4 transition-shadow hover:shadow-sm lg:flex-row lg:items-center lg:justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] bg-white text-[#667085] shadow-sm">
+                                        <FileText className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <span className="text-[15px] font-semibold text-[#111827]">
+                                            Upload new contact document
+                                        </span>
+                                        <p className="text-xs text-[#6B7280]">
+                                            Add a new contract PDF even when documents already exist.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3 lg:justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={openContactsUploadPicker}
+                                        className="inline-flex items-center gap-2 rounded-xl border border-[#0F9DB0] bg-white px-4 py-2.5 text-sm font-semibold text-[#0F9DB0] transition-colors hover:bg-[#F0FBFD]"
+                                    >
+                                        <Upload className="h-4 w-4" />
+                                        Upload Document
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input
+                                ref={contactsUploadInputRef}
+                                type="file"
+                                accept="application/pdf"
+                                className="hidden"
+                                onChange={(event) => {
+                                    const selectedFile = event.target.files?.[0];
+                                    handleContactUpload('Contract', selectedFile);
+                                    event.target.value = '';
+                                }}
+                            />
+                        </div>
+                    ) : null}
+
                     {visibleDocuments.map((doc) => (
                         <div
                             key={doc.id}
@@ -252,6 +300,47 @@ const TechnicianDocuments = ({ documents = [], contactDocuments = null, technici
                             </div>
                         </div>
                     ))}
+                </div>
+            ) : activeTab === 'contacts' ? (
+                <div className="rounded-2xl border border-dashed border-[#E5E7EB] bg-[#FAFAFB] p-5 sm:p-6">
+                    <div className="flex flex-col gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-4 transition-shadow hover:shadow-sm lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E5E7EB] bg-white text-[#667085] shadow-sm">
+                                <FileText className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <span className="text-[15px] font-semibold text-[#111827]">
+                                    No contact documents yet.
+                                </span>
+                                <p className="text-xs text-[#6B7280]">
+                                    Upload the first contract PDF for this technician.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 lg:justify-end">
+                            <button
+                                type="button"
+                                onClick={openContactsUploadPicker}
+                                className="inline-flex items-center gap-2 rounded-xl border border-[#0F9DB0] bg-white px-4 py-2.5 text-sm font-semibold text-[#0F9DB0] transition-colors hover:bg-[#F0FBFD]"
+                            >
+                                <Upload className="h-4 w-4" />
+                                Upload Document
+                            </button>
+                        </div>
+                    </div>
+
+                    <input
+                        ref={contactsUploadInputRef}
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={(event) => {
+                            const selectedFile = event.target.files?.[0];
+                            handleContactUpload('Contract', selectedFile);
+                            event.target.value = '';
+                        }}
+                    />
                 </div>
             ) : activeTab === 'technician-info' ? (
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#FAFAFB] p-4">
