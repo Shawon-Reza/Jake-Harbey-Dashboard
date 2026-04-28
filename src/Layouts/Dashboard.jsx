@@ -26,7 +26,7 @@ export default function Dashboard() {
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}
-      <div className="flex h-screen min-w-0 w-full flex-1 flex-col overflow-y-auto font-poppins">
+      <div className="flex h-screen overflow-hidden min-w-0 w-full flex-1 flex-col overflow-y-auto font-poppins">
         <div className={sidebarOpen ? "hidden md:block" : "block"}>
           <Navbar
             isSidebarOpen={sidebarOpen}

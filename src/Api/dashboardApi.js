@@ -8,6 +8,7 @@ export const DASHBOARD_USERS_QUERY_KEY = ["dashboard", "users", "all"];
 export const DASHBOARD_USERS_STATS_QUERY_KEY = ["dashboard", "users", "statistics"];
 export const DASHBOARD_JOBS_QUERY_KEY = ["dashboard", "jobs", "all"];
 export const DASHBOARD_JOB_DETAILS_QUERY_KEY = ["dashboard", "inbox", "job", "details"];
+export const DASHBOARD_JOB_NOTES_QUERY_KEY = ["dashboard", "inbox", "job", "notes"];
 export const DASHBOARD_INBOX_FLAGS_QUERY_KEY = ["dashboard", "inbox", "flags", "list"];
 export const DASHBOARD_INBOX_QUERY_KEY = ["dashboard", "inbox", "all"];
 export const DASHBOARD_PLANS_QUERY_KEY = ["dashboard", "plans", "all"];
@@ -207,6 +208,55 @@ export const useDashboardJobDetailsQuery = (jobId) => {
     enabled: Boolean(jobId) && hasAccessToken(),
     staleTime: 1000 * 60 * 2,
     retry: 1,
+  });
+};
+
+export const useDashboardJobNotesQuery = (jobId) => {
+  return useQuery({
+    queryKey: [...DASHBOARD_JOB_NOTES_QUERY_KEY, jobId],
+    queryFn: async () => {
+      const response = await axiosApi.get(`/dashboard/inbox/${jobId}/note/`);
+      return response.data;
+    },
+    enabled: Boolean(jobId) && hasAccessToken(),
+    staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+};
+
+export const useUpdateDashboardInboxTotalPriceMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jobId, amount }) => {
+      const response = await axiosApi.patch(`/dashboard/inbox/${jobId}/update-total-price/`,
+        { amount },
+      );
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_INBOX_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_JOBS_QUERY_KEY });
+    },
+  });
+};
+
+export const useUpdateDashboardInboxDepositPriceMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jobId, amount }) => {
+      const response = await axiosApi.patch(`/dashboard/inbox/${jobId}/update-deposit-price/`,
+        { amount },
+      );
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_JOB_DETAILS_QUERY_KEY, variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_INBOX_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_JOBS_QUERY_KEY });
+    },
   });
 };
 
