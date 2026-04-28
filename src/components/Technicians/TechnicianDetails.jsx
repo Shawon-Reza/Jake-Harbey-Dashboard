@@ -1,6 +1,7 @@
 import { ArrowLeft, Briefcase, Calendar, CheckCircle2, ChevronRight, Shield } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDashboardTechnicianDetailsQuery } from "../../Api/dashboardApi";
+import { toast } from 'sonner';
+import { useDashboardTechnicianDetailsQuery, useUpdateTechnicianViewPayoutAmountMutation } from "../../Api/dashboardApi";
 import TechnicianDocuments from "./TechnicianDocuments";
 
 const toDisplay = (value) => {
@@ -19,7 +20,24 @@ const TechnicianDetails = ({ tech, onSelectJob }) => {
 
     const technicianId = tech?.user_id || tech?.id || routeId;
     const { data, isLoading, isError } = useDashboardTechnicianDetailsQuery(technicianId);
-    console.log(data)
+    const { mutateAsync: updateViewPayoutAmount, isPending: isUpdatingViewPayoutAmount } = useUpdateTechnicianViewPayoutAmountMutation();
+
+    const handleViewPayoutAmountToggle = async () => {
+        if (!technicianId) {
+            toast.error('Missing technician id for this action.');
+            return;
+        }
+
+        try {
+            await updateViewPayoutAmount({ technicianId });
+            toast.success('Payout permission updated.');
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to update payout permission.';
+            toast.error(message, {
+                position: 'top-right',
+            });
+        }
+    };
     if (!technicianId) {
         return (
             <div className="flex-1 overflow-y-auto bg-[#F9FBFC] p-12 text-gray-400">
@@ -163,7 +181,19 @@ const TechnicianDetails = ({ tech, onSelectJob }) => {
                             </h3>
                             <div className="flex items-center justify-between rounded-2xl border border-[#F3F4F6] bg-[#F9FAFB] p-6">
                                 <span className="text-sm text-[#111827]">View Payout Amount</span>
-                                <span className="text-base font-semibold text-[#1A9C9C]">{toDisplay(data.view_payout_amount)}</span>
+                                <button
+                                    type="button"
+                                    onClick={handleViewPayoutAmountToggle}
+                                    disabled={isUpdatingViewPayoutAmount}
+                                    className={`relative inline-flex h-8 w-14 items-center rounded-full border transition-colors ${data.view_payout_amount ? 'border-[#16A34A] bg-[#DCFCE7]' : 'border-[#D1D5DB] bg-[#E5E7EB]'
+                                        }`}
+                                    aria-label={`View payout amount ${data.view_payout_amount ? 'enabled' : 'disabled'}`}
+                                >
+                                    <span
+                                        className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-sm transition-transform ${data.view_payout_amount ? 'translate-x-7' : 'translate-x-1'
+                                            }`}
+                                    />
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -71,7 +71,7 @@ const Technicians = () => {
 
   return (
     <div className="flex-1 overflow-y-auto bg-white">
-      <div className=" mx-auto p-12">
+      <div className=" mx-auto px-10 py-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-medium text-[#2A2A2A] mb-8">

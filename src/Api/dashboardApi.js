@@ -489,3 +489,18 @@ export const useDashboardTechnicianDetailsQuery = (userId) => {
     retry: 1,
   });
 };
+
+export const useUpdateTechnicianViewPayoutAmountMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ technicianId }) => {
+      const response = await axiosApi.patch(`/dashboard/technicians/${technicianId}/view-payout-amount/`);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...DASHBOARD_TECHNICIAN_DETAILS_QUERY_KEY, variables.technicianId] });
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_TECHNICIANS_QUERY_KEY });
+    },
+  });
+};
