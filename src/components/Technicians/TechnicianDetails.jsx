@@ -1,6 +1,7 @@
-import { ArrowLeft, Briefcase, Calendar, CheckCircle2, ChevronRight, Download, FileText, Shield } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, CheckCircle2, ChevronRight, Shield } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDashboardTechnicianDetailsQuery } from "../../Api/dashboardApi";
+import TechnicianDocuments from "./TechnicianDocuments";
 
 const toDisplay = (value) => {
     if (value === null || value === undefined || value === "") return "N/A";
@@ -64,6 +65,7 @@ const TechnicianDetails = ({ tech, onSelectJob }) => {
     return (
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
             <div className="bg-[#F2F2F2] mx-auto p-12">
+
                 <div className="mb-10 flex items-center justify-between">
                     <button onClick={() => {
                         navigate(-1);
@@ -130,44 +132,8 @@ const TechnicianDetails = ({ tech, onSelectJob }) => {
                             </div>
                         </div>
 
-                        <div className="col-span-2 mb-10 rounded-[24px] border border-[#F3F4F6] bg-white p-8 shadow-sm">
-                            <div className="mb-8 flex items-center gap-3">
-                                <FileText className="h-6 w-6 text-[#454545]" />
-                                <h3 className="text-xl font-bold text-[#2A2A2A]">Documents</h3>
-                            </div>
+                        <TechnicianDocuments contactDocuments={documents} technicianInfoDocuments={[]} technicianId={technicianId} />
 
-                            {documents.length ? (
-                                <div className="space-y-4">
-                                    {documents.map((doc) => (
-                                        <div key={doc.id} className="group flex items-center justify-between rounded-2xl border border-[#E5E7EB] bg-white p-4 transition-shadow">
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex items-center justify-center rounded-xl border border-[#E5E7EB] bg-white p-3">
-                                                    <FileText className="h-5 w-5 text-[#6B7280]" />
-                                                </div>
-                                                <div>
-                                                    <span className="text-[15px] font-semibold text-[#111827]">
-                                                        {toDisplay(doc.document_type)}
-                                                    </span>
-                                                    <p className="text-xs text-[#6B7280]">
-                                                        Created: {toDisplay(doc.created_at)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a
-                                                href={doc.document_file || "#"}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="rounded-xl border border-[#1A9C9C] bg-white px-5 py-2.5 text-sm font-semibold text-[#1A9C9C] transition-colors hover:bg-teal-50"
-                                            >
-                                                <Download className="mr-2 inline h-4 w-4" /> View
-                                            </a>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="p-8 text-center text-sm text-[#6B7280]">N/A</div>
-                            )}
-                        </div>
                     </div>
 
                     <div className="space-y-8">
