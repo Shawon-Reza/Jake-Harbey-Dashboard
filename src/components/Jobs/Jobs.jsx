@@ -73,7 +73,7 @@ export default function Jobs() {
 
   return (
     <div className="flex-1 overflow-y-auto bg-white">
-      <div className="mx-auto p-12">
+      <div className="mx-auto px-10 py-5">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-medium text-[#2A2A2A] mb-10">All Jobs</h1>
         </div>

@@ -64,9 +64,9 @@ const TechnicianDetails = ({ tech, onSelectJob }) => {
 
     return (
         <div className="flex-1 overflow-y-auto bg-[#F9FBFC]">
-            <div className="bg-[#F2F2F2] mx-auto p-12">
+            <div className="bg-[#F2F2F2] mx-auto px-10 py-5">
 
-                <div className="mb-10 flex items-center justify-between">
+                <div className="mb-5 flex items-center justify-between">
                     <button onClick={() => {
                         navigate(-1);
                     }} className="group flex items-center gap-4 text-[#454545] transition-all">
