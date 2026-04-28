@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Users,
     Briefcase,
@@ -10,84 +10,88 @@ import {
     UserPlus,
     Mail
 } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+    useMarkAllNotificationsReadMutation,
+    useMarkNotificationReadMutation,
+    useNotificationsQuery,
+} from '../../Api/notificationApi';
+
+const formatNotificationTime = (createdAt) => {
+    if (!createdAt) {
+        return 'N/A';
+    }
+
+    const createdDate = new Date(createdAt);
+    if (Number.isNaN(createdDate.getTime())) {
+        return 'N/A';
+    }
+
+    const diffInMs = Date.now() - createdDate.getTime();
+    const diffInMinutes = Math.max(0, Math.floor(diffInMs / 60000));
+
+    if (diffInMinutes < 60) {
+        return `${Math.max(1, diffInMinutes)}m ago`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return `${diffInHours}h ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    return diffInDays === 1 ? 'Yesterday' : `${diffInDays}d ago`;
+};
 
 export default function Notifications() {
     const [activeTab, setActiveTab] = useState('all');
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            type: 'job-assigned',
-            title: 'Job assigned',
-            description: 'Job #11 assigned to James Wilson - Windshield Replacement.',
-            time: '2h ago',
-            unread: false,
-            iconType: 'user'
-        },
-        {
-            id: 2,
-            type: 'service-request',
-            title: 'New service request',
-            description: 'John Smith submitted a new request for Windshield Replacement.',
-            time: '3h ago',
-            unread: true,
-            iconType: 'briefcase'
-        },
-        {
-            id: 3,
-            type: 'service-request',
-            title: 'New service request',
-            description: 'Daniel Garcia submitted a new request for Chip Repair.',
-            time: '4h ago',
-            unread: false,
-            iconType: 'briefcase'
-        },
-        {
-            id: 4,
-            type: 'follow-up',
-            title: 'Follow-up reminder',
-            description: 'Oliver White - Detailing. Customer did not answer phone.',
-            time: '20h ago',
-            unread: true,
-            iconType: 'clock'
-        },
-        {
-            id: 5,
-            type: 'signed-off',
-            title: 'Customer signed off',
-            description: 'Lucy Anderson signed off on job #12.',
-            time: '22h ago',
-            unread: false,
-            iconType: 'clipboard'
-        },
-        {
-            id: 6,
-            type: 'declined',
-            title: 'Job declined',
-            description: 'David Chen declined job #3. Needs reassignment.',
-            time: 'Yesterday',
-            unread: false,
-            iconType: 'error'
-        },
-        {
-            id: 7,
-            type: 'completed',
-            title: 'Job completed',
-            description: 'Job #8 completed - Window Tinting for John Smith.',
-            time: 'Yesterday',
-            unread: false,
-            iconType: 'check'
-        }
-    ]);
+    const { data, isLoading, isError } = useNotificationsQuery();
+    const { mutateAsync: markAllNotificationsRead, isPending: isMarkingAllRead } = useMarkAllNotificationsReadMutation();
+    const { mutateAsync: markNotificationRead, isPending: isMarkingRead } = useMarkNotificationReadMutation();
 
-    const unreadCount = notifications.filter(n => n.unread).length;
-    const allCount = 15; // To match image exactly
+    const notifications = useMemo(() => {
+        const items = Array.isArray(data?.notifications) ? data.notifications : [];
+
+        return items.map((notification) => ({
+            id: notification.id,
+            title: notification.message,
+            description: notification.message,
+            time: formatNotificationTime(notification.created_at),
+            unread: !notification.is_read,
+            iconType: 'briefcase',
+            jobId: notification.job_id,
+        }));
+    }, [data]);
+
+    const unreadCount = data?.unread_count ?? notifications.filter((notification) => notification.unread).length;
+    const allCount = notifications.length;
 
     const filteredNotifications = activeTab === 'unread'
-        ? notifications.filter(n => n.unread)
+        ? notifications.filter((notification) => notification.unread)
         : notifications;
 
-    const markAllAsRead = () => {
-        setNotifications(notifications.map(n => ({ ...n, unread: false })));
+    const markAllAsRead = async () => {
+        try {
+            await markAllNotificationsRead();
+            toast.success('All notifications marked as read.');
+            setActiveTab('all');
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to mark all notifications as read.';
+            toast.error(message);
+        }
+    };
+
+    const handleMarkAsRead = async (notification) => {
+        if (!notification.unread || isMarkingRead) {
+            return;
+        }
+
+        try {
+            await markNotificationRead(notification.id);
+        } catch (error) {
+            const message = error?.response?.data?.message || error?.response?.data?.detail || 'Unable to mark this notification as read.';
+            toast.error(message);
+        }
     };
 
     const getIcon = (iconType) => {
@@ -135,34 +139,35 @@ export default function Notifications() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFB] px-8 py-2">
+        <div className="min-h-screen bg-[#F8FAFB] px-4 py-4 sm:px-8 sm:py-2">
             {/* Header */}
-            <div className=" mx-auto mb-4">
-                <div className="flex items-center justify-between mb-3">
+            <div className="mx-auto mb-4 max-w-7xl">
+                <div className="flex flex-col gap-4 mb-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-3xl text-[#2A2A2A]">Notifications</h1>
-                        <span className="bg-[#FF4D4D] text-white px-4 py-1 rounded-full">
-                            5 new
+                        <h1 className="text-2xl font-semibold text-[#2A2A2A] sm:text-3xl">Notifications</h1>
+                        <span className="rounded-full bg-[#FF4D4D] px-4 py-1 text-sm font-medium text-white">
+                            {unreadCount} new
                         </span>
                     </div>
                     <button
                         onClick={markAllAsRead}
-                        className="text-[#1A9C9C] flex items-center gap-3 text-xl hover:opacity-80 transition-opacity"
+                        disabled={isMarkingAllRead}
+                        className="flex items-center gap-3 text-base text-[#1A9C9C] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 sm:text-xl"
                     >
-                        <Check size={24} strokeWidth={3} />
+                        <Check size={22} strokeWidth={3} />
                         Mark all as read
                     </button>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-12 border-b border-[#E0E0E0] relative">
+                <div className="relative flex gap-8 overflow-x-auto border-b border-[#E0E0E0] sm:gap-12">
                     <button
                         onClick={() => setActiveTab('all')}
-                        className={`pb-4 px-2 flex items-center gap-3 text-xl transition-all relative ${activeTab === 'all' ? 'text-[#1A9C9C]' : 'text-gray-400'
+                        className={`relative flex items-center gap-3 px-2 pb-4 text-base transition-all sm:text-xl ${activeTab === 'all' ? 'text-[#1A9C9C]' : 'text-gray-400'
                             }`}
                     >
                         All
-                        <span className={`px-3 py-0.5 rounded-full text-sm ${activeTab === 'all' ? 'bg-[#D1EAEA] text-[#1A9C9C]' : 'bg-gray-100 text-gray-400'
+                        <span className={`rounded-full px-3 py-0.5 text-sm ${activeTab === 'all' ? 'bg-[#D1EAEA] text-[#1A9C9C]' : 'bg-gray-100 text-gray-400'
                             }`}>
                             {allCount}
                         </span>
@@ -172,13 +177,13 @@ export default function Notifications() {
                     </button>
                     <button
                         onClick={() => setActiveTab('unread')}
-                        className={`pb-4 px-2 flex items-center gap-3 text-xl transition-all relative ${activeTab === 'unread' ? 'text-[#1A9C9C]' : 'text-gray-400'
+                        className={`relative flex items-center gap-3 px-2 pb-4 text-base transition-all sm:text-xl ${activeTab === 'unread' ? 'text-[#1A9C9C]' : 'text-gray-400'
                             }`}
                     >
                         Unread
-                        <span className={`px-3 py-0.5 rounded-full text-sm ${activeTab === 'unread' ? 'bg-[#D1EAEA] text-[#1A9C9C]' : 'bg-gray-100 text-gray-400'
+                        <span className={`rounded-full px-3 py-0.5 text-sm ${activeTab === 'unread' ? 'bg-[#D1EAEA] text-[#1A9C9C]' : 'bg-gray-100 text-gray-400'
                             }`}>
-                            5
+                            {unreadCount}
                         </span>
                         {activeTab === 'unread' && (
                             <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#1A9C9C] rounded-t-full"></div>
@@ -188,34 +193,42 @@ export default function Notifications() {
             </div>
 
             {/* Notifications List Container */}
-            <div className="max-w-7xl mx-auto bg-white rounded-2xl border border-[#E0E0E0] overflow-hidden shadow-sm">
-                <div className="divide-y divide-[#F0F0F0]">
-                    {filteredNotifications.map((notification) => (
-                        <div
+            <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white shadow-sm">
+                {isLoading ? (
+                    <div className="p-8 text-sm text-gray-500">Loading notifications...</div>
+                ) : isError ? (
+                    <div className="p-8 text-sm text-red-500">Failed to load notifications.</div>
+                ) : (
+                    <div className="divide-y divide-[#F0F0F0]">
+                        {filteredNotifications.map((notification) => (
+                        <button
                             key={notification.id}
-                            className={`flex items-center gap-6 px-10 py-6 transition-colors ${notification.unread ? 'bg-[#F9FBFC]' : 'bg-white'
-                                }`}
+                            type="button"
+                            onClick={() => handleMarkAsRead(notification)}
+                            disabled={!notification.unread || isMarkingRead}
+                            className={`flex w-full items-start gap-4 px-4 py-5 text-left transition-colors sm:items-center sm:gap-6 sm:px-10 sm:py-6 disabled:cursor-default ${notification.unread ? 'cursor-pointer hover:bg-[#F4FAFD] bg-[#F9FBFC]' : 'bg-white'}`}
                         >
                             <div className="flex-shrink-0">
                                 {getIcon(notification.iconType)}
                             </div>
 
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-xl text-[#2A2A2A]">{notification.title}</h3>
-                                <p className="text-[#666666] mt-1">{notification.description}</p>
+                                <h3 className="text-base font-medium text-[#2A2A2A] sm:text-xl">{notification.title}</h3>
+                                <p className="mt-1 text-sm text-[#666666] sm:text-base">{notification.description}</p>
                             </div>
 
-                            <div className="flex items-center gap-6">
-                                <span className="text-[#999999] text-base whitespace-nowrap">{notification.time}</span>
+                            <div className="flex items-center gap-4 sm:gap-6">
+                                <span className="whitespace-nowrap text-sm text-[#999999] sm:text-base">{notification.time}</span>
                                 <div className="flex items-center justify-center w-6">
                                     {notification.unread && (
                                         <div className="w-3 h-3 rounded-full bg-[#00B4D8] shadow-sm shadow-[#00B4D8]/30"></div>
                                     )}
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        </button>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
