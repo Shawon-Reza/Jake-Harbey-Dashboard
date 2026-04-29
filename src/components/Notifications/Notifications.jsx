@@ -16,6 +16,7 @@ import {
     useMarkNotificationReadMutation,
     useNotificationsQuery,
 } from '../../Api/notificationApi';
+import { useNavigate } from 'react-router-dom';
 
 const formatNotificationTime = (createdAt) => {
     if (!createdAt) {
@@ -47,8 +48,10 @@ export default function Notifications() {
     const [activeTab, setActiveTab] = useState('all');
     const { data, isLoading, isError } = useNotificationsQuery();
     console.log(data)
+    console.log(data)
     const { mutateAsync: markAllNotificationsRead, isPending: isMarkingAllRead } = useMarkAllNotificationsReadMutation();
     const { mutateAsync: markNotificationRead, isPending: isMarkingRead } = useMarkNotificationReadMutation();
+    const navigate = useNavigate();
 
     const notifications = useMemo(() => {
         const items = Array.isArray(data?.notifications) ? data.notifications : [];
@@ -61,6 +64,7 @@ export default function Notifications() {
             unread: !notification.is_read,
             iconType: 'briefcase',
             jobId: notification.job_id,
+            type: notification.type,
         }));
     }, [data]);
 
@@ -139,10 +143,18 @@ export default function Notifications() {
         }
     };
 
+    const handleNotificationClick = (notification) => {
+        console.log("Click notification:", notification)
+        if (notification.type === "job_assigned") {
+            // window.location.href = `/jobs/${notification.jobId}`;
+            navigate(`/jobs/${notification.jobId}`);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#F8FAFB] px-4 py-4 sm:px-8 sm:py-2">
             {/* Header */}
-            <div className="mx-auto mb-4 max-w-7xl">
+            <div className="mx-auto mb-4">
                 <div className="flex flex-col gap-4 mb-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <h1 className="text-2xl font-semibold text-[#2A2A2A] sm:text-3xl">Notifications</h1>
@@ -205,9 +217,12 @@ export default function Notifications() {
                             <button
                                 key={notification.id}
                                 type="button"
-                                onClick={() => handleMarkAsRead(notification)}
-                                disabled={!notification.unread || isMarkingRead}
-                                className={`flex w-full items-start gap-4 px-4 py-5 text-left transition-colors sm:items-center sm:gap-6 sm:px-10 sm:py-6 disabled:cursor-default ${notification.unread ? 'cursor-pointer hover:bg-[#F4FAFD] bg-[#F9FBFC]' : 'bg-white'}`}
+                                onClick={async () => {
+                                    await handleMarkAsRead(notification)
+                                    handleNotificationClick(notification)
+                                }}
+                                // disabled={!notification.unread || isMarkingRead}
+                                className={`cursor-pointer flex w-full items-start gap-4 px-4 py-5 text-left transition-colors sm:items-center sm:gap-6 sm:px-10 sm:py-6 disabled:cursor-default ${notification.unread ? 'cursor-pointer hover:bg-[#F4FAFD] bg-[#F9FBFC]' : 'bg-white'}`}
                             >
                                 <div className="flex-shrink-0">
                                     {getIcon(notification.iconType)}
