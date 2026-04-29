@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bell, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import profile from "../../assets/images/profile.png";
@@ -6,6 +6,7 @@ import { useCurrentUserQuery } from '../../Api/authApi';
 import { connectWebSocketForNotifications } from '../../Api/socketService';
 export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
   const { data: currentUser } = useCurrentUserQuery();
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const userName = currentUser?.full_name || 'User';
   const userRole = currentUser?.role || 'Admin';
@@ -15,12 +16,17 @@ export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
 
 
 
+
+
+
   //================================ Connect the WebSocket For Notifications ======================================\\
   useEffect(() => {
+    console.log("Call webSocket")
     const socketHandler = connectWebSocketForNotifications({
+      
       onMessage: (data) => {
         console.log("socket data", data)
-        // setNotificationCount(data?.data?.total)
+        setNotificationCount(data?.unseen_count ?? 0)
 
       },
 
@@ -80,9 +86,11 @@ export default function Navbar({ onMenuClick, isSidebarOpen = false }) {
         {/* Notification Bell */}
         <Link to="/notifications" className="relative p-2 text-[#1A9C9C] hover:bg-gray-50 rounded-xl transition-colors group">
           <Bell className="w-8 h-8" />
-          <span className="absolute -top-1 -right-1 bg-[#A4D747] text-[#454545] text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
-            6
-          </span>
+          {notificationCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-[#A4D747] text-[#454545] text-[10px] font-bold min-w-5 h-5 px-1 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+              {notificationCount}
+            </span>
+          )}
         </Link>
 
         {/* User Profile */}

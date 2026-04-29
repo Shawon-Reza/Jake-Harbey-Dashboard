@@ -41,7 +41,7 @@ const CustomersListTable = ({ customers }) => {
                                     <div className="w-16 h-16 shrink-0 rounded-full overflow-hidden border border-[#E7E7E7] bg-gray-100">
                                         <img
                                             className="block w-full h-full object-cover"
-                                            src={customer.profile_picture ? `${base_URL}${customer.profile_picture}` : profile}
+                                            src={customer.profile_picture ? customer.profile_picture : profile}
                                             alt={customer.full_name || customer.name || customer.customer_name || "Customer"}
                                             onError={(event) => {
                                                 event.currentTarget.src = profile;

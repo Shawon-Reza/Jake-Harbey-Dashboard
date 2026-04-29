@@ -25,6 +25,13 @@ export const useNotificationsQuery = () => {
     });
 };
 
+
+
+
+
+
+
+
 export const useMarkNotificationReadMutation = () => {
     const queryClient = useQueryClient();
 
