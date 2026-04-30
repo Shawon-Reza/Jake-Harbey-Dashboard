@@ -12,7 +12,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-   
+
   const loginMutation = useLoginMutation();
 
   const handleLogin = async (e) => {
@@ -24,15 +24,16 @@ const SignIn = () => {
         password,
       });
 
+      navigate("/");
       toast.success("Login successful!");
       setEmail("");
       setPassword("");
-      navigate("/");
+
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          error?.response?.data?.detail ||
-          "Login failed"
+        error?.response?.data?.detail ||
+        "Login failed"
       );
     }
   };

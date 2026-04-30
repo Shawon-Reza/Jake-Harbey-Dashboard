@@ -27,7 +27,7 @@ export function PrivateRoute({ children }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (!currentUser || currentUser?.role !== "admin") {
+  if (!currentUser || currentUser?.role != "admin") {
     localStorage.removeItem("auth");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
