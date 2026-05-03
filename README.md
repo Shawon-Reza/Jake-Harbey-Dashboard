@@ -1,1 +1,1 @@
-This dashboard is connected to jake-harbey Car repair system APP
+This dashboard is connected to jake-harbey Car repair system APP. 
